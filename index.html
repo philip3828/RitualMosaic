@@ -679,15 +679,28 @@ function onFile(e) {
   const file = e.target.files[0];
   if (!file) return;
   if (!file.type.startsWith('image/')) { showToast('Invalid', 'Only image files are accepted.', false); return; }
-  if (file.size > 500 * 1024)         { showToast('Too Large', 'Image must be under 500 KB.', false); return; }
-  const r = new FileReader();
-  r.onload = ev => {
-    _imgDataURL = ev.target.result;
-    document.getElementById('prev-img').src = ev.target.result;
+  if (file.size > 500 * 1024) { showToast('Too Large', 'Image must be under 500 KB.', false); return; }
+
+  const img = new Image();
+  const objectUrl = URL.createObjectURL(file);
+  img.onload = () => {
+    const MAX = 100;
+    let w = img.width, h = img.height;
+    if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
+    else        { w = Math.round(w * MAX / h); h = MAX; }
+
+    const canvas = document.createElement('canvas');
+    canvas.width  = w;
+    canvas.height = h;
+    canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+
+    _imgDataURL = canvas.toDataURL('image/jpeg', 0.5);
+    document.getElementById('prev-img').src = _imgDataURL;
     document.getElementById('preview').classList.add('on');
+    URL.revokeObjectURL(objectUrl);
     checkBtn();
   };
-  r.readAsDataURL(file);
+  img.src = objectUrl;
 }
 
 function checkBtn() {
