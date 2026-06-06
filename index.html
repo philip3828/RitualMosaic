@@ -31,6 +31,12 @@ h1{font-family:'Cinzel Decorative',serif;font-size:clamp(1.8rem,5vw,3.8rem);font
 .dot.ok{background:#22c55e;}
 @keyframes blink{0%,100%{opacity:1;}50%{opacity:.35;}}
 
+/* CONNECT BUTTON */
+#connect-btn{display:inline-flex;align-items:center;gap:8px;padding:11px 26px;background:linear-gradient(135deg,var(--crimson),var(--rune));border:1px solid var(--blood);color:var(--pale);font-family:'Cinzel',serif;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;position:relative;overflow:hidden;transition:all .3s;}
+#connect-btn:hover{box-shadow:0 0 36px rgba(196,30,58,.55);filter:brightness(1.1);}
+#wallet-display{display:none;align-items:center;gap:10px;padding:8px 18px;border:1px solid rgba(201,168,76,.25);background:rgba(11,7,24,.7);font-size:.7rem;color:var(--gold);letter-spacing:.12em;font-family:monospace;cursor:pointer;}
+#wallet-display:hover{border-color:var(--gold);}
+
 /* BUTTONS */
 .btn{display:inline-flex;align-items:center;gap:8px;padding:11px 26px;background:transparent;border:1px solid var(--gold);color:var(--gold);font-family:'Cinzel',serif;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;position:relative;overflow:hidden;transition:all .3s;}
 .btn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--crimson),var(--rune));opacity:0;transition:opacity .3s;}
@@ -42,7 +48,7 @@ h1{font-family:'Cinzel Decorative',serif;font-size:clamp(1.8rem,5vw,3.8rem);font
 .btn:disabled{opacity:.4;cursor:not-allowed;pointer-events:none;}
 .btn.outline-gold{border-color:var(--gold);color:var(--gold);}
 
-/* ── CHAIN GATE OVERLAY ── */
+/* CHAIN GATE OVERLAY */
 #chain-gate{position:fixed;inset:0;background:rgba(3,2,10,.97);z-index:500;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(18px);opacity:0;pointer-events:none;transition:opacity .4s;}
 #chain-gate.show{opacity:1;pointer-events:all;}
 .gate-box{max-width:460px;width:90%;border:1px solid rgba(201,168,76,.25);background:rgba(11,7,24,.98);padding:44px 38px;text-align:center;}
@@ -135,8 +141,9 @@ footer a{color:var(--blood);text-decoration:none;}
 .spinner{display:inline-block;width:12px;height:12px;border:2px solid rgba(201,168,76,.3);border-top-color:var(--gold);border-radius:50%;animation:sp .75s linear infinite;vertical-align:middle;}
 @keyframes sp{to{transform:rotate(360deg);}}
 
-/* RainbowKit overrides — force dark theme to match */
-[data-rk] button,[data-rk] div{font-family:'Cinzel',serif !important;}
+/* No wallet message */
+.no-wallet-msg{font-size:.72rem;color:var(--dim);font-family:'IM Fell English',serif;font-style:italic;letter-spacing:.08em;line-height:1.7;padding:14px;border:1px solid rgba(201,168,76,.1);background:rgba(74,26,110,.04);}
+.no-wallet-msg a{color:var(--blood);}
 </style>
 </head>
 <body>
@@ -188,8 +195,15 @@ footer a{color:var(--blood);text-decoration:none;}
     <div class="stat">Offerings <span class="stat-val" id="count">—</span></div>
     <div class="stat">Currency <span class="stat-val">RITUAL</span></div>
   </div>
-  <!-- RainbowKit connect button mounts here -->
-  <div id="rk-mount"></div>
+  <!-- Wallet connection UI — native window.ethereum, no framework needed -->
+  <div id="rk-mount">
+    <button id="connect-btn" onclick="connectWallet()">⬡ Connect Wallet</button>
+    <div id="wallet-display" onclick="disconnectWallet()">
+      <span id="wd-dot" style="width:7px;height:7px;border-radius:50%;background:#22c55e;display:inline-block;"></span>
+      <span id="wd-addr">0x1234...5678</span>
+      <span style="font-size:.6rem;color:var(--dim);font-family:'Cinzel',serif;letter-spacing:.1em;">DISCONNECT</span>
+    </div>
+  </div>
 </div>
 
 <!-- LAYOUT -->
@@ -215,6 +229,9 @@ footer a{color:var(--blood);text-decoration:none;}
       <div class="panel-title">⬡ Your Wallet</div>
       <div id="w-disconnected">
         <p style="font-size:.72rem;color:var(--dim);font-family:'IM Fell English',serif;font-style:italic;letter-spacing:.08em;line-height:1.7;">Connect your wallet using the button in the top bar. You must be on Ritual Chain (ID: 1979) to make an offering.</p>
+        <div id="no-metamask" style="display:none;margin-top:12px;">
+          <p class="no-wallet-msg">No wallet detected. Install <a href="https://metamask.io" target="_blank">MetaMask ↗</a> or another Web3 wallet, then refresh the page.</p>
+        </div>
       </div>
       <div id="w-connected" style="display:none;">
         <div class="wallet-info">
@@ -309,157 +326,32 @@ footer a{color:var(--blood);text-decoration:none;}
   <div class="toast-bar"><div class="toast-fill" id="t-fill"></div></div>
 </div>
 
-<!-- ══════════════════════════════════════════════════════════
-     RAINBOWKIT + WAGMI via ESM (no bundler needed)
-══════════════════════════════════════════════════════════ -->
-<script type="importmap">
-{
-  "imports": {
-    "react":        "https://esm.sh/react@18.3.1",
-    "react-dom":    "https://esm.sh/react-dom@18.3.1",
-    "react-dom/client": "https://esm.sh/react-dom@18.3.1/client",
-    "wagmi":        "https://esm.sh/wagmi@2.14.6",
-    "viem":         "https://esm.sh/viem@2.23.2",
-    "@tanstack/react-query": "https://esm.sh/@tanstack/react-query@5.62.3",
-    "@rainbow-me/rainbowkit": "https://esm.sh/@rainbow-me/rainbowkit@2.2.4",
-    "@rainbow-me/rainbowkit/": "https://esm.sh/@rainbow-me/rainbowkit@2.2.4/"
-  }
-}
-</script>
+<script>
+// ─────────────────────────────────────────────
+// CONSTANTS
+// ─────────────────────────────────────────────
+const CONTRACT_ADDRESS  = '0x9D7cC5A44B2F6103852eE7FbE47432e1a2F42276';
+const OFFERING_FEE_WEI  = BigInt('200000000000000'); // 0.0002 RITUAL
+const RITUAL_CHAIN_ID   = 1979;
+const RITUAL_CHAIN_HEX  = '0x7BB';
+const RITUAL_RPC        = 'https://rpc.ritualfoundation.org/';
+const EXPLORER          = 'https://explorer.ritualfoundation.org';
+const OFFERING_TOPIC    = '0x4f51faf6c4561ff95f067657e43439f0f856d97c04d9ec9070a6199ad418e235';
 
-<script type="module">
-import React, { useState, useEffect, useCallback } from 'react';
-import { createRoot } from 'react-dom/client';
-import { createConfig, WagmiProvider, useAccount, useChainId, useSwitchChain, usePublicClient, useWalletClient } from 'wagmi';
-import { http } from 'viem';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { RainbowKitProvider, ConnectButton, getDefaultConfig, darkTheme } from '@rainbow-me/rainbowkit';
-
-// ── RITUAL CHAIN DEFINITION ────────────────────────────────
-const ritualChain = {
-  id: 1979,
-  name: 'Ritual',
-  nativeCurrency: { name: 'Ritual', symbol: 'RITUAL', decimals: 18 },
-  rpcUrls: { default: { http: ['https://rpc.ritualfoundation.org/'] } },
-  blockExplorers: { default: { name: 'Ritual Explorer', url: 'https://explorer.ritualfoundation.org' } },
-};
-
-// ── CONTRACT ───────────────────────────────────────────────
-const CONTRACT_ADDRESS = '0x9D7cC5A44B2F6103852eE7FbE47432e1a2F42276';
-const OFFERING_FEE_WEI = 200000000000000n; // 0.0002 RITUAL
-
-const CONTRACT_ABI = [
-  {
-    name: 'offer',
-    type: 'function',
-    stateMutability: 'payable',
-    inputs: [
-      { name: 'label',     type: 'string' },
-      { name: 'imageData', type: 'string' },
-    ],
-    outputs: [],
-  },
-  {
-    name: 'hasOffered',
-    type: 'function',
-    stateMutability: 'view',
-    inputs: [{ name: '', type: 'address' }],
-    outputs: [{ name: '', type: 'bool' }],
-  },
-  {
-    name: 'offeringCount',
-    type: 'function',
-    stateMutability: 'view',
-    inputs: [],
-    outputs: [{ name: '', type: 'uint256' }],
-  },
-  {
-    name: 'Offering',
-    type: 'event',
-    inputs: [
-      { name: 'donor',     type: 'address', indexed: true },
-      { name: 'label',     type: 'string',  indexed: false },
-      { name: 'imageData', type: 'string',  indexed: false },
-      { name: 'tileIndex', type: 'uint256', indexed: true },
-      { name: 'timestamp', type: 'uint256', indexed: false },
-    ],
-  },
-];
-
-// ── WAGMI CONFIG ───────────────────────────────────────────
-const config = getDefaultConfig({
-  appName:   'Ritual Mosaic',
-  projectId: 'ritualMosaicDapp',            // WalletConnect project id
-  chains:    [ritualChain],
-  transports: { [ritualChain.id]: http('https://rpc.ritualfoundation.org/') },
-  ssr: false,
-});
-
-const queryClient = new QueryClient();
-
-// ── CHAIN GATE LOGIC (pure JS, not React) ─────────────────
-window._gateClosedByUser = false;
-
-window.switchToRitual = async () => {
-  const btn = document.getElementById('gate-btn-txt');
-  btn.innerHTML = '<span class="spinner"></span> Switching...';
-  try {
-    await window.ethereum.request({
-      method: 'wallet_switchEthereumChain',
-      params: [{ chainId: '0x7BB' }],        // 1979 in hex
-    });
-  } catch (err) {
-    if (err.code === 4902) {
-      // Chain not in wallet — import it
-      try {
-        await window.ethereum.request({
-          method: 'wallet_addEthereumChain',
-          params: [{
-            chainId:           '0x7BB',
-            chainName:         'Ritual',
-            rpcUrls:           ['https://rpc.ritualfoundation.org/'],
-            nativeCurrency:    { name: 'Ritual', symbol: 'RITUAL', decimals: 18 },
-            blockExplorerUrls: ['https://explorer.ritualfoundation.org/'],
-          }],
-        });
-      } catch (addErr) {
-        showToast('Failed', addErr.message || 'Could not add Ritual Chain.', false);
-      }
-    } else {
-      showToast('Failed', err.message || 'Could not switch network.', false);
-    }
-  }
-  btn.textContent = '⬡ Switch to Ritual Chain';
-};
-
-window.closeGateViewOnly = () => {
-  window._gateClosedByUser = true;
-  document.getElementById('chain-gate').classList.remove('show');
-};
-
-// Called by React component whenever chain/account changes
-window.updateGate = (address, chainId) => {
-  const gate = document.getElementById('chain-gate');
-  if (!address) {
-    // Not connected — hide gate
-    gate.classList.remove('show');
-    return;
-  }
-  if (chainId !== 1979) {
-    // Connected but wrong chain — always show gate (override user close)
-    document.getElementById('gate-title').textContent = 'Wrong Network';
-    document.getElementById('gate-msg').textContent =
-      'Your wallet is connected but not on Ritual Chain. Switch network to make your offering.';
-    document.getElementById('gate-btn-txt').textContent = '⬡ Switch to Ritual Chain';
-    gate.classList.add('show');
-  } else {
-    gate.classList.remove('show');
-  }
-};
-
-// ── TOAST ──────────────────────────────────────────────────
+// ─────────────────────────────────────────────
+// STATE
+// ─────────────────────────────────────────────
+let _wallet     = null;
+let _chainId    = null;
+let _imgDataURL = null;
+let _offerings  = [];
+let _gateClosedByUser = false;
 let _toastTimer;
-window.showToast = (title, msg, loading) => {
+
+// ─────────────────────────────────────────────
+// TOAST
+// ─────────────────────────────────────────────
+function showToast(title, msg, loading) {
   clearTimeout(_toastTimer);
   document.getElementById('t-title').textContent = title;
   document.getElementById('t-msg').innerHTML = msg;
@@ -470,29 +362,261 @@ window.showToast = (title, msg, loading) => {
     fill.style.animation  = 'fill-anim 1.8s ease infinite';
     fill.style.width      = '0%';
   } else {
-    fill.style.background   = title.startsWith('✦') ? '#22c55e' : 'var(--crimson)';
-    fill.style.width        = '0%';
-    fill.style.transition   = 'width 4.5s linear';
+    fill.style.background = title.startsWith('✦') ? '#22c55e' : 'var(--crimson)';
+    fill.style.width      = '0%';
+    fill.style.transition = 'width 4.5s linear';
     setTimeout(() => { fill.style.width = '100%'; }, 30);
   }
   document.getElementById('toast').classList.add('show');
   if (!loading) _toastTimer = setTimeout(() => document.getElementById('toast').classList.remove('show'), 5000);
-};
+}
 
-// ── WALL ───────────────────────────────────────────────────
-window._offerings = [];
+// ─────────────────────────────────────────────
+// WALLET CONNECTION
+// ─────────────────────────────────────────────
+async function connectWallet() {
+  if (!window.ethereum) {
+    document.getElementById('no-metamask').style.display = 'block';
+    showToast('No Wallet', 'Please install MetaMask or another Web3 wallet.', false);
+    return;
+  }
+  try {
+    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+    if (accounts && accounts[0]) {
+      _wallet = accounts[0];
+      const chainHex = await window.ethereum.request({ method: 'eth_chainId' });
+      _chainId = parseInt(chainHex, 16);
+      onWalletConnected();
+    }
+  } catch (err) {
+    showToast('Rejected', err.message || 'Connection cancelled.', false);
+  }
+}
 
-window.renderWall = () => {
-  const data  = window._offerings;
-  const grid  = document.getElementById('mosaic');
-  const n     = data.length;
+function disconnectWallet() {
+  _wallet  = null;
+  _chainId = null;
+  onWalletDisconnected();
+}
+
+function onWalletConnected() {
+  // Top bar
+  document.getElementById('connect-btn').style.display  = 'none';
+  document.getElementById('wallet-display').style.display = 'flex';
+  document.getElementById('wd-addr').textContent = _wallet.slice(0,6)+'...'+_wallet.slice(-4);
+
+  // Sidebar
+  document.getElementById('w-disconnected').style.display = 'none';
+  document.getElementById('w-connected').style.display    = 'block';
+  document.getElementById('w-addr').textContent = _wallet.slice(0,6)+'...'+_wallet.slice(-4);
+  document.getElementById('w-explorer').href = `${EXPLORER}/address/${_wallet}`;
+
+  // Status dot
+  const onRitual = _chainId === RITUAL_CHAIN_ID;
+  const dot = document.getElementById('dot');
+  if (onRitual) {
+    dot.classList.add('ok');
+    document.getElementById('net-name').textContent = 'Ritual Chain ✓';
+  } else {
+    dot.classList.remove('ok');
+    document.getElementById('net-name').textContent = 'Wrong Network';
+  }
+
+  // Chain gate
+  updateGate();
+
+  // Balance
+  window.ethereum.request({ method: 'eth_getBalance', params: [_wallet, 'latest'] })
+    .then(b => { document.getElementById('w-bal').textContent = (parseInt(b, 16) / 1e18).toFixed(4); })
+    .catch(() => {});
+
+  // Check if already offered & reload wall
+  if (onRitual) {
+    checkIfAlreadyOffered(_wallet);
+    loadOfferingsViaProvider();
+  }
+
+  checkBtn();
+}
+
+function onWalletDisconnected() {
+  document.getElementById('connect-btn').style.display   = 'flex';
+  document.getElementById('wallet-display').style.display = 'none';
+  document.getElementById('w-disconnected').style.display = 'block';
+  document.getElementById('w-connected').style.display   = 'none';
+  document.getElementById('dot').classList.remove('ok');
+  document.getElementById('net-name').textContent = 'Not Connected';
+  document.getElementById('upload-panel').style.display   = 'block';
+  document.getElementById('already-offered').style.display = 'none';
+  updateGate();
+  checkBtn();
+}
+
+// ─────────────────────────────────────────────
+// CHAIN GATE
+// ─────────────────────────────────────────────
+function updateGate() {
+  const gate = document.getElementById('chain-gate');
+  if (!_wallet) { gate.classList.remove('show'); return; }
+  if (_chainId !== RITUAL_CHAIN_ID) {
+    document.getElementById('gate-title').textContent = 'Wrong Network';
+    document.getElementById('gate-msg').textContent   =
+      'Your wallet is connected but not on Ritual Chain. Switch network to make your offering.';
+    gate.classList.add('show');
+  } else {
+    gate.classList.remove('show');
+  }
+}
+
+async function switchToRitual() {
+  if (!window.ethereum) return;
+  const btn = document.getElementById('gate-btn-txt');
+  btn.innerHTML = '<span class="spinner"></span> Switching...';
+  try {
+    await window.ethereum.request({
+      method: 'wallet_switchEthereumChain',
+      params: [{ chainId: RITUAL_CHAIN_HEX }],
+    });
+  } catch (err) {
+    if (err.code === 4902 || err.code === -32603) {
+      try {
+        await window.ethereum.request({
+          method: 'wallet_addEthereumChain',
+          params: [{
+            chainId:           RITUAL_CHAIN_HEX,
+            chainName:         'Ritual',
+            rpcUrls:           [RITUAL_RPC],
+            nativeCurrency:    { name: 'Ritual', symbol: 'RITUAL', decimals: 18 },
+            blockExplorerUrls: [EXPLORER + '/'],
+          }],
+        });
+      } catch (addErr) {
+        showToast('Failed', addErr.message || 'Could not add Ritual Chain.', false);
+      }
+    } else {
+      showToast('Failed', err.message || 'Could not switch network.', false);
+    }
+  }
+  btn.textContent = '⬡ Switch to Ritual Chain';
+}
+
+function closeGateViewOnly() {
+  _gateClosedByUser = true;
+  document.getElementById('chain-gate').classList.remove('show');
+}
+
+// ─────────────────────────────────────────────
+// WALLET EVENT LISTENERS
+// ─────────────────────────────────────────────
+function setupWalletListeners() {
+  if (!window.ethereum) return;
+  window.ethereum.on('accountsChanged', (accounts) => {
+    if (accounts && accounts[0]) {
+      _wallet = accounts[0];
+      onWalletConnected();
+    } else {
+      disconnectWallet();
+    }
+  });
+  window.ethereum.on('chainChanged', (chainHex) => {
+    _chainId = parseInt(chainHex, 16);
+    const onRitual = _chainId === RITUAL_CHAIN_ID;
+    const dot = document.getElementById('dot');
+    if (onRitual) {
+      dot.classList.add('ok');
+      document.getElementById('net-name').textContent = 'Ritual Chain ✓';
+      if (_wallet) {
+        checkIfAlreadyOffered(_wallet);
+        loadOfferingsViaProvider();
+      }
+    } else {
+      dot.classList.remove('ok');
+      document.getElementById('net-name').textContent = 'Wrong Network';
+    }
+    updateGate();
+    checkBtn();
+  });
+  // Auto-reconnect if previously connected
+  window.ethereum.request({ method: 'eth_accounts' })
+    .then(accounts => {
+      if (accounts && accounts[0]) {
+        _wallet = accounts[0];
+        window.ethereum.request({ method: 'eth_chainId' })
+          .then(hex => { _chainId = parseInt(hex, 16); onWalletConnected(); })
+          .catch(() => onWalletConnected());
+      }
+    }).catch(() => {});
+}
+
+// ─────────────────────────────────────────────
+// WALL — LOAD FROM CHAIN
+// ─────────────────────────────────────────────
+async function loadOfferingsViaProvider() {
+  if (!window.ethereum) { loadFromLocal(); return; }
+  try {
+    const logs = await window.ethereum.request({
+      method: 'eth_getLogs',
+      params: [{
+        fromBlock: '0x0',
+        toBlock:   'latest',
+        address:   CONTRACT_ADDRESS,
+        topics:    [OFFERING_TOPIC],
+      }],
+    });
+
+    const decoded = logs.map(log => {
+      try {
+        const data   = log.data.startsWith('0x') ? log.data.slice(2) : log.data;
+        const readUint = h => parseInt(h, 16);
+        const off0   = readUint(data.slice(0,   64));
+        const off1   = readUint(data.slice(64,  128));
+        const ts     = readUint(data.slice(128, 192));
+
+        const readStr = (byteOff) => {
+          const hexOff = byteOff * 2;
+          const len    = readUint(data.slice(hexOff, hexOff + 64));
+          const bytes  = [];
+          for (let i = 0; i < len; i++) {
+            bytes.push(parseInt(data.slice(hexOff + 64 + i * 2, hexOff + 66 + i * 2), 16));
+          }
+          return new TextDecoder().decode(new Uint8Array(bytes));
+        };
+
+        return {
+          donor:     '0x' + log.topics[1].slice(26),
+          tileIndex: log.topics[2] ? parseInt(log.topics[2], 16) : 0,
+          label:     readStr(off0),
+          imageData: readStr(off1),
+          timestamp: ts * 1000,
+          txHash:    log.transactionHash,
+        };
+      } catch { return null; }
+    }).filter(Boolean).sort((a, b) => a.tileIndex - b.tileIndex);
+
+    _offerings = decoded;
+    renderWall();
+  } catch { loadFromLocal(); }
+}
+
+function loadFromLocal() {
+  try { _offerings = JSON.parse(localStorage.getItem('ritual_mosaic_v2') || '[]'); }
+  catch { _offerings = []; }
+  renderWall();
+}
+
+// ─────────────────────────────────────────────
+// WALL — RENDER
+// ─────────────────────────────────────────────
+function renderWall() {
+  const grid = document.getElementById('mosaic');
+  const n    = _offerings.length;
   document.getElementById('count').textContent  = n;
   document.getElementById('count2').textContent = n;
   document.getElementById('loading-wall').style.display = 'none';
   grid.querySelectorAll('.tile').forEach(t => t.remove());
   if (n === 0) { document.getElementById('empty').style.display = 'block'; return; }
   document.getElementById('empty').style.display = 'none';
-  data.forEach((o, i) => {
+  _offerings.forEach((o, i) => {
     const tile = document.createElement('div');
     tile.className = 'tile';
     tile.style.animationDelay = Math.min(i * 0.025, 1.2) + 's';
@@ -508,161 +632,74 @@ window.renderWall = () => {
     grid.appendChild(tile);
   });
   adjustTileSize();
-};
+}
 
-window.adjustTileSize = () => {
+function adjustTileSize() {
   const wall = document.getElementById('mosaic');
   const w    = wall.clientWidth;
   const cols = Math.max(4, Math.floor(w / 82));
   const sz   = Math.floor((w - cols * 2) / cols);
   document.documentElement.style.setProperty('--tile', sz + 'px');
-};
+}
+window.addEventListener('resize', adjustTileSize);
 
-window.addEventListener('resize', window.adjustTileSize);
-
-// ── LOAD OFFERINGS FROM CHAIN ──────────────────────────────
-window.loadOfferings = async () => {
+// ─────────────────────────────────────────────
+// ALREADY OFFERED CHECK
+// ─────────────────────────────────────────────
+async function checkIfAlreadyOffered(address) {
+  if (!address || !window.ethereum) return;
   try {
-    // eth_getLogs from the contract — reads all Offering events
-    const OFFERING_TOPIC = '0x' + await keccak256Text('Offering(address,string,string,uint256,uint256)');
-
-    const logs = await window.ethereum.request({
-      method: 'eth_getLogs',
+    const res = await window.ethereum.request({
+      method: 'eth_call',
       params: [{
-        fromBlock: '0x0',
-        toBlock:   'latest',
-        address:   CONTRACT_ADDRESS,
-        topics:    [null],   // all events from this contract
-      }],
+        to:   CONTRACT_ADDRESS,
+        data: '0xb4a99a4b' + address.slice(2).padStart(64, '0'),
+      }, 'latest'],
     });
+    if (res === '0x' + '0'.repeat(63) + '1') {
+      const past = _offerings.find(o => o.donor && o.donor.toLowerCase() === address.toLowerCase());
+      markOffered(past?.txHash || null);
+    }
+  } catch {}
+}
 
-    // Decode logs manually (no ethers needed)
-    const decoded = logs
-      .filter(l => l.topics && l.topics.length > 0)
-      .map(log => {
-        try {
-          // Non-indexed: label, imageData, timestamp packed in data field
-          const data = log.data.slice(2); // remove 0x
-          // ABI decode: 3 dynamic values (label, imageData, timestamp)
-          // Each starts with a 32-byte offset, then 32-byte length, then value
-          const toNum = hex => parseInt(hex, 16);
-          const offset0 = toNum(data.slice(0, 64));       // offset to label
-          const offset1 = toNum(data.slice(64, 128));     // offset to imageData
-          const offset2 = toNum(data.slice(128, 192));    // offset to timestamp (uint256 - 32 bytes)
-
-          const readStr = (offset) => {
-            const byteOffset = offset * 2;
-            const len = toNum(data.slice(byteOffset, byteOffset + 64));
-            const raw = data.slice(byteOffset + 64, byteOffset + 64 + len * 2);
-            return decodeURIComponent(raw.replace(/../g, '%$&').replace(/%00/g,''));
-          };
-
-          const label     = readStr(offset0);
-          const imageData = readStr(offset1);
-          const ts        = toNum(data.slice(offset2 * 2, offset2 * 2 + 64));
-          const donor     = '0x' + log.topics[1].slice(26);
-          const tileIndex = log.topics[2] ? parseInt(log.topics[2], 16) : 0;
-
-          return { donor, label, imageData, tileIndex, timestamp: ts * 1000, txHash: log.transactionHash };
-        } catch { return null; }
-      })
-      .filter(Boolean)
-      .sort((a, b) => a.tileIndex - b.tileIndex);
-
-    window._offerings = decoded;
-    window.renderWall();
-  } catch (err) {
-    // Fallback to localStorage while chain read fails / no provider
-    loadFromLocal();
+function markOffered(txHash) {
+  document.getElementById('upload-panel').style.display    = 'none';
+  document.getElementById('already-offered').style.display = 'block';
+  if (txHash) {
+    document.getElementById('offered-tx').innerHTML =
+      `<a href="${EXPLORER}/tx/${txHash}" target="_blank" style="color:var(--blood);">View your TX on Explorer ↗</a>`;
   }
-};
+}
 
-window.loadFromLocal = () => {
-  try {
-    window._offerings = JSON.parse(localStorage.getItem('ritual_mosaic_v2') || '[]');
-  } catch { window._offerings = []; }
-  window.renderWall();
-};
-
-// Simple keccak256 of a string (for topic hash) via ethers-like approach
-// We use a pre-computed value since we can't run crypto in ESM easily here
-const OFFERING_TOPIC_HASH = '0x4f51faf6c4561ff95f067657e43439f0f856d97c04d9ec9070a6199ad418e235';
-
-window.loadOfferingsViaProvider = async () => {
-  if (!window.ethereum) { window.loadFromLocal(); return; }
-  try {
-    const logs = await window.ethereum.request({
-      method: 'eth_getLogs',
-      params: [{
-        fromBlock: '0x0',
-        toBlock:   'latest',
-        address:   CONTRACT_ADDRESS,
-        topics:    [OFFERING_TOPIC_HASH],
-      }],
-    });
-
-    const decoded = logs.map(log => {
-      try {
-        const data = log.data.startsWith('0x') ? log.data.slice(2) : log.data;
-        // ABI decode 3 values: (string label, string imageData, uint256 timestamp)
-        const readUint = (hex64) => parseInt(hex64, 16);
-        const off0 = readUint(data.slice(0,   64));  // label offset in bytes
-        const off1 = readUint(data.slice(64,  128)); // imageData offset in bytes
-        const ts   = readUint(data.slice(128, 192)); // timestamp (3rd slot, direct uint256)
-
-        const readStr = (byteOff) => {
-          const hexOff = byteOff * 2;
-          const len    = readUint(data.slice(hexOff, hexOff + 64));
-          const chars  = [];
-          for (let i = 0; i < len; i++) {
-            chars.push(parseInt(data.slice(hexOff + 64 + i*2, hexOff + 66 + i*2), 16));
-          }
-          return new TextDecoder().decode(new Uint8Array(chars));
-        };
-
-        return {
-          donor:     '0x' + log.topics[1].slice(26),
-          tileIndex: log.topics[2] ? parseInt(log.topics[2], 16) : 0,
-          label:     readStr(off0),
-          imageData: readStr(off1),
-          timestamp: ts * 1000,
-          txHash:    log.transactionHash,
-        };
-      } catch { return null; }
-    }).filter(Boolean).sort((a,b) => a.tileIndex - b.tileIndex);
-
-    window._offerings = decoded;
-    window.renderWall();
-  } catch { window.loadFromLocal(); }
-};
-
-// ── UPLOAD LOGIC ──────────────────────────────────────────
-window._imgDataURL = null;
-window._wallet     = null;
-window._onRitual   = false;
-
-window.onFile = (e) => {
+// ─────────────────────────────────────────────
+// FILE UPLOAD
+// ─────────────────────────────────────────────
+function onFile(e) {
   const file = e.target.files[0];
   if (!file) return;
   if (!file.type.startsWith('image/')) { showToast('Invalid', 'Only image files are accepted.', false); return; }
-  if (file.size > 500*1024)            { showToast('Too Large', 'Image must be under 500 KB.', false); return; }
+  if (file.size > 500 * 1024)         { showToast('Too Large', 'Image must be under 500 KB.', false); return; }
   const r = new FileReader();
   r.onload = ev => {
-    window._imgDataURL = ev.target.result;
+    _imgDataURL = ev.target.result;
     document.getElementById('prev-img').src = ev.target.result;
     document.getElementById('preview').classList.add('on');
     checkBtn();
   };
   r.readAsDataURL(file);
-};
+}
 
-window.checkBtn = () => {
+function checkBtn() {
   const btn = document.getElementById('offer-btn');
-  if (btn) btn.disabled = !(window._wallet && window._imgDataURL && window._onRitual);
-};
+  if (btn) btn.disabled = !(_wallet && _imgDataURL && _chainId === RITUAL_CHAIN_ID);
+}
 
-window.submitOffering = async () => {
-  if (!window._wallet || !window._imgDataURL || !window._onRitual) return;
+// ─────────────────────────────────────────────
+// SUBMIT OFFERING
+// ─────────────────────────────────────────────
+async function submitOffering() {
+  if (!_wallet || !_imgDataURL || _chainId !== RITUAL_CHAIN_ID) return;
 
   // Check on-chain if already offered
   try {
@@ -670,10 +707,10 @@ window.submitOffering = async () => {
       method: 'eth_call',
       params: [{
         to:   CONTRACT_ADDRESS,
-        data: '0xb4a99a4b' + window._wallet.slice(2).padStart(64, '0'), // hasOffered(address)
+        data: '0xb4a99a4b' + _wallet.slice(2).padStart(64, '0'),
       }, 'latest'],
     });
-    if (already === '0x0000000000000000000000000000000000000000000000000000000000000001') {
+    if (already === '0x' + '0'.repeat(63) + '1') {
       showToast('Already Offered', 'This wallet has already made its one offering.', false);
       markOffered(null);
       return;
@@ -687,56 +724,55 @@ window.submitOffering = async () => {
   showToast('Sign Transaction', 'Approve in your wallet — paying 0.0002 RITUAL to engrave...', true);
 
   try {
-    // Encode offer(string label, string imageData) call
-    const encode = (s) => {
-      const bytes = new TextEncoder().encode(s);
-      const hex   = Array.from(bytes).map(b => b.toString(16).padStart(2,'0')).join('');
-      const lenHex = bytes.length.toString(16).padStart(64,'0');
-      const padded = hex.padEnd(Math.ceil(hex.length/64)*64,'0');
-      return lenHex + padded;
+    // Encode offer(string label, string imageData)
+    const encodeStr = (s) => {
+      const bytes  = new TextEncoder().encode(s);
+      const lenHex = bytes.length.toString(16).padStart(64, '0');
+      let hex      = Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
+      hex = hex.padEnd(Math.ceil(hex.length / 64) * 64, '0');
+      return lenHex + hex;
     };
 
     const selector  = '0xb6b4af05'; // keccak256("offer(string,string)")[0:4]
-    const off0      = (64).toString(16).padStart(64,'0');            // offset to label
-    const off1      = (64 + 32 + Math.ceil(new TextEncoder().encode(label).length/32)*32).toString(16).padStart(64,'0');
-    const labelEnc  = encode(label);
-    const imageEnc  = encode(window._imgDataURL);
+    const labelEnc  = encodeStr(label);
+    const imageEnc  = encodeStr(_imgDataURL);
+    const labelBytes = new TextEncoder().encode(label).length;
+    const off0      = (64).toString(16).padStart(64, '0');
+    const off1      = (64 + 32 + Math.ceil(labelBytes / 32) * 32).toString(16).padStart(64, '0');
     const calldata  = selector + off0 + off1 + labelEnc + imageEnc;
 
     const txHash = await window.ethereum.request({
       method: 'eth_sendTransaction',
       params: [{
-        from:     window._wallet,
-        to:       CONTRACT_ADDRESS,
-        value:    '0x' + OFFERING_FEE_WEI.toString(16),
-        data:     calldata,
-        chainId:  '0x7BB',
+        from:    _wallet,
+        to:      CONTRACT_ADDRESS,
+        value:   '0x' + OFFERING_FEE_WEI.toString(16),
+        data:    calldata,
+        chainId: RITUAL_CHAIN_HEX,
       }],
     });
 
-    // Save locally as fallback + update wall immediately
+    // Save locally + update wall immediately
     const offering = {
-      donor:     window._wallet,
+      donor:     _wallet,
       label,
-      imageData: window._imgDataURL,
-      tileIndex: (window._offerings.length + 1),
+      imageData: _imgDataURL,
+      tileIndex: _offerings.length + 1,
       timestamp: Date.now(),
       txHash,
     };
-    window._offerings.push(offering);
+    _offerings.push(offering);
     const local = JSON.parse(localStorage.getItem('ritual_mosaic_v2') || '[]');
-    local.push({ address: window._wallet, label, image: window._imgDataURL, timestamp: Date.now(), txHash });
+    local.push({ address: _wallet, label, image: _imgDataURL, timestamp: Date.now(), txHash });
     localStorage.setItem('ritual_mosaic_v2', JSON.stringify(local));
-    window.renderWall();
+    renderWall();
 
     document.getElementById('t-title').textContent = '✦ Offering Accepted';
     document.getElementById('t-msg').innerHTML =
-      `TX: <a href="https://explorer.ritualfoundation.org/tx/${txHash}" target="_blank" style="color:var(--gold)">${txHash.slice(0,12)}...↗</a><br>Your image is now etched forever.`;
+      `TX: <a href="${EXPLORER}/tx/${txHash}" target="_blank" style="color:var(--gold)">${txHash.slice(0,12)}...↗</a><br>Your image is now etched forever.`;
 
     markOffered(txHash);
-
-    // Reset form
-    window._imgDataURL = null;
+    _imgDataURL = null;
     document.getElementById('preview').classList.remove('on');
     document.getElementById('label').value = '';
     document.getElementById('file-in').value = '';
@@ -746,195 +782,72 @@ window.submitOffering = async () => {
     btn.disabled = false;
     document.getElementById('offer-txt').textContent = '🔥 Pay 0.0002 RITUAL & Engrave';
   }
-};
+}
 
-window.markOffered = (txHash) => {
-  document.getElementById('upload-panel').style.display   = 'none';
-  document.getElementById('already-offered').style.display = 'block';
-  if (txHash) {
-    document.getElementById('offered-tx').innerHTML =
-      `<a href="https://explorer.ritualfoundation.org/tx/${txHash}" target="_blank" style="color:var(--blood);">View your TX on Explorer ↗</a>`;
-  }
-};
-
-window.checkIfAlreadyOffered = async (address) => {
-  if (!address || !window.ethereum) return;
-  try {
-    const res = await window.ethereum.request({
-      method: 'eth_call',
-      params: [{
-        to:   CONTRACT_ADDRESS,
-        data: '0xb4a99a4b' + address.slice(2).padStart(64, '0'),
-      }, 'latest'],
-    });
-    if (res === '0x0000000000000000000000000000000000000000000000000000000000000001') {
-      // Find their past TX from local cache
-      const past = window._offerings.find(o => o.donor && o.donor.toLowerCase() === address.toLowerCase());
-      markOffered(past?.txHash || null);
-    }
-  } catch {}
-};
-
-// ── MODAL ─────────────────────────────────────────────────
-window.openModal = (o) => {
+// ─────────────────────────────────────────────
+// MODAL
+// ─────────────────────────────────────────────
+function openModal(o) {
   const addr = o.donor ? o.donor.slice(0,6)+'...'+o.donor.slice(-4) : '???';
-  document.getElementById('m-img').src = o.imageData;
+  document.getElementById('m-img').src  = o.imageData;
   document.getElementById('m-name').textContent = o.label || 'Anonymous';
   document.getElementById('m-meta').innerHTML =
     `Offered by: ${addr}<br>Date: ${new Date(o.timestamp).toLocaleString()}<br>` +
-    (o.txHash ? `TX: <a href="https://explorer.ritualfoundation.org/tx/${o.txHash}" target="_blank">${o.txHash.slice(0,14)}...↗</a>` : '');
+    (o.txHash ? `TX: <a href="${EXPLORER}/tx/${o.txHash}" target="_blank">${o.txHash.slice(0,14)}...↗</a>` : '');
   document.getElementById('modal').classList.add('open');
-};
+}
 
-window.closeModal = (e) => {
+function closeModal(e) {
   if (!e || e.target === document.getElementById('modal'))
     document.getElementById('modal').classList.remove('open');
-};
+}
 
-// ── DRAG & DROP ───────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('e-url').textContent = window.location.href;
-  const z = document.getElementById('drop');
-  z.addEventListener('dragover',  e => { e.preventDefault(); z.classList.add('over'); });
-  z.addEventListener('dragleave', ()  => z.classList.remove('over'));
-  z.addEventListener('drop',      e  => { e.preventDefault(); z.classList.remove('over'); if (e.dataTransfer.files[0]) { document.getElementById('file-in').files = e.dataTransfer.files; onFile({ target: document.getElementById('file-in') }); } });
-
-  // Load wall immediately (no wallet needed)
-  if (window.ethereum) {
-    window.loadOfferingsViaProvider();
-  } else {
-    window.loadFromLocal();
-  }
-});
-
-window.copyEmbed = () => {
+// ─────────────────────────────────────────────
+// EMBED
+// ─────────────────────────────────────────────
+function copyEmbed() {
   const code = `<iframe src="${window.location.href}" width="100%" height="700" frameborder="0"></iframe>`;
   navigator.clipboard.writeText(code).then(() => {
     const b = document.querySelector('.copy-btn');
     b.textContent = '✓ Copied!';
     setTimeout(() => b.textContent = '📋 Copy Embed Code', 2000);
   });
-};
-
-// ══════════════════════════════════════════════════════════
-// REACT COMPONENT — RainbowKit ConnectButton + chain logic
-// ══════════════════════════════════════════════════════════
-function WalletManager() {
-  const { address, isConnected } = useAccount();
-  const chainId                  = useChainId();
-  const { switchChain }          = useSwitchChain();
-
-  const onRitual = chainId === 1979;
-
-  useEffect(() => {
-    window._wallet   = address || null;
-    window._onRitual = isConnected && onRitual;
-    window.checkBtn();
-
-    // Update top bar UI
-    const dot     = document.getElementById('dot');
-    const netName = document.getElementById('net-name');
-    const wConn   = document.getElementById('w-connected');
-    const wDisc   = document.getElementById('w-disconnected');
-    const wAddr   = document.getElementById('w-addr');
-    const wExp    = document.getElementById('w-explorer');
-
-    if (isConnected && onRitual) {
-      dot.classList.add('ok');
-      netName.textContent = 'Ritual Chain ✓';
-      wConn.style.display = 'block';
-      wDisc.style.display = 'none';
-      wAddr.textContent   = address.slice(0,6)+'...'+address.slice(-4);
-      wExp.href           = `https://explorer.ritualfoundation.org/address/${address}`;
-      // Load balance
-      if (window.ethereum) {
-        window.ethereum.request({ method:'eth_getBalance', params:[address,'latest'] })
-          .then(b => { document.getElementById('w-bal').textContent = (parseInt(b,16)/1e18).toFixed(4); })
-          .catch(()=>{});
-      }
-      // Check if already offered
-      window.checkIfAlreadyOffered(address);
-      // Re-load wall from chain now that we have a provider
-      window.loadOfferingsViaProvider();
-    } else if (isConnected && !onRitual) {
-      dot.classList.remove('ok');
-      netName.textContent = 'Wrong Network';
-      wConn.style.display = 'none';
-      wDisc.style.display = 'block';
-    } else {
-      dot.classList.remove('ok');
-      netName.textContent = 'Not Connected';
-      wConn.style.display = 'none';
-      wDisc.style.display = 'block';
-      // Reset upload panel
-      document.getElementById('upload-panel').style.display    = 'block';
-      document.getElementById('already-offered').style.display = 'none';
-    }
-
-    // Gate: show if connected but wrong chain
-    window.updateGate(address, chainId);
-
-    // Override gate switch button to use wagmi switchChain
-    window.switchToRitual = async () => {
-      const btn = document.getElementById('gate-btn-txt');
-      btn.innerHTML = '<span class="spinner"></span> Switching...';
-      try {
-        await switchChain({ chainId: 1979 });
-      } catch (err) {
-        // Chain not added — fall back to wallet_addEthereumChain
-        if (window.ethereum) {
-          try {
-            await window.ethereum.request({
-              method: 'wallet_addEthereumChain',
-              params: [{
-                chainId:           '0x7BB',
-                chainName:         'Ritual',
-                rpcUrls:           ['https://rpc.ritualfoundation.org/'],
-                nativeCurrency:    { name:'Ritual', symbol:'RITUAL', decimals:18 },
-                blockExplorerUrls: ['https://explorer.ritualfoundation.org/'],
-              }],
-            });
-          } catch (addErr) {
-            showToast('Failed', addErr.message || 'Could not add Ritual Chain.', false);
-          }
-        }
-      }
-      btn.textContent = '⬡ Switch to Ritual Chain';
-    };
-
-  }, [isConnected, address, chainId, onRitual]);
-
-  return React.createElement(ConnectButton, {
-    label:           '⬡ Connect Wallet',
-    showBalance:     false,
-    chainStatus:     'none',
-    accountStatus:   'address',
-  });
 }
 
-// ── MOUNT ─────────────────────────────────────────────────
-const rkTheme = darkTheme({
-  accentColor:          '#c9a84c',
-  accentColorForeground:'#03020a',
-  borderRadius:         'none',
-  fontStack:            'system',
-  overlayBlur:          'large',
+// ─────────────────────────────────────────────
+// DRAG & DROP
+// ─────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('e-url').textContent = window.location.href;
+
+  const z = document.getElementById('drop');
+  z.addEventListener('dragover',  e => { e.preventDefault(); z.classList.add('over'); });
+  z.addEventListener('dragleave', ()  => z.classList.remove('over'));
+  z.addEventListener('drop', e => {
+    e.preventDefault();
+    z.classList.remove('over');
+    if (e.dataTransfer.files[0]) {
+      document.getElementById('file-in').files = e.dataTransfer.files;
+      onFile({ target: document.getElementById('file-in') });
+    }
+  });
+
+  // Show no-wallet warning if no ethereum
+  if (!window.ethereum) {
+    document.getElementById('no-metamask').style.display = 'block';
+  }
+
+  // Setup wallet event listeners and auto-reconnect
+  setupWalletListeners();
+
+  // Load wall (works without wallet)
+  if (window.ethereum) {
+    loadOfferingsViaProvider();
+  } else {
+    loadFromLocal();
+  }
 });
-
-const App = () =>
-  React.createElement(WagmiProvider, { config },
-    React.createElement(QueryClientProvider, { client: queryClient },
-      React.createElement(RainbowKitProvider, { theme: rkTheme, modalSize: 'compact' },
-        React.createElement(WalletManager)
-      )
-    )
-  );
-
-createRoot(document.getElementById('rk-mount')).render(React.createElement(App));
 </script>
-
-<!-- RainbowKit CSS -->
-<link rel="stylesheet" href="https://esm.sh/@rainbow-me/rainbowkit@2.2.4/dist/index.css">
 
 </body>
 </html>
