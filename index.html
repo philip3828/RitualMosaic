@@ -234,7 +234,7 @@ footer a{color:var(--blood);text-decoration:none;}
           <label>Your Name / Label (optional)</label>
           <input type="text" id="label" placeholder="e.g. 0xWizard, CryptoMage..." maxlength="60">
         </div>
-        <div class="gas-note">✦ Paying 0.0002 RITUAL engraves your image permanently. One wallet, one tile, forever. Contract: <a href="https://explorer.ritualfoundation.org/address/0x9D7cC5A44B2F6103852eE7FbE47432e1a2F42276" target="_blank" style="color:var(--blood);">↗</a></div>
+        <div class="gas-note">✦ Paying 0.0002 RITUAL engraves your image permanently. One wallet, one tile, forever. Contract: <a href="https://explorer.ritualfoundation.org/address/0x0b81B5f23d9fD1DCC6F1477A206e10753961b053" target="_blank" style="color:var(--blood);">↗</a></div>
         <button class="btn solid submit" id="offer-btn" onclick="submitOffering()" disabled>
           <span id="offer-txt">🔥 Pay 0.0002 RITUAL &amp; Engrave</span>
         </button>
@@ -251,7 +251,7 @@ footer a{color:var(--blood);text-decoration:none;}
 </div>
 
 <footer>
-  Ritual Mosaic · Contract: <a href="https://explorer.ritualfoundation.org/address/0x9D7cC5A44B2F6103852eE7FbE47432e1a2F42276" target="_blank">0x9D7cC5A44B2F6103852eE7FbE47432e1a2F42276</a> · Ritual Chain 1979
+  Ritual Mosaic · Contract: <a href="https://explorer.ritualfoundation.org/address/0x0b81B5f23d9fD1DCC6F1477A206e10753961b053" target="_blank">0x0b81B5f23d9fD1DCC6F1477A206e10753961b053</a> · Ritual Chain 1979
 </footer>
 
 <div class="modal-bg" id="modal" onclick="closeModal(event)">
@@ -275,8 +275,8 @@ footer a{color:var(--blood);text-decoration:none;}
 // ─────────────────────────────────────────────
 // SUPABASE CONFIG
 // ─────────────────────────────────────────────
-const SUPABASE_URL  = 'https://safyiakhlywhaeifgqvw.supabase.co';
-const SUPABASE_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNhZnlpYWtobHl3aGFlaWZncXZ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2OTg2MDMsImV4cCI6MjA5NjI3NDYwM30.GH43kdIKUqy6RG_NYienY3CDe8BK3UsVleOIcGdbdus';
+const SUPABASE_URL = 'https://safyiakhlywhaeifgqvw.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNhZnlpYWtobHl3aGFlaWZncXZ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2OTg2MDMsImV4cCI6MjA5NjI3NDYwM30.GH43kdIKUqy6RG_NYienY3CDe8BK3UsVleOIcGdbdus';
 
 async function sbFetch(path, options = {}) {
   const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
@@ -330,7 +330,7 @@ async function checkAlreadyOfferedInDB(wallet) {
 // ─────────────────────────────────────────────
 // CONSTANTS
 // ─────────────────────────────────────────────
-const CONTRACT_ADDRESS = '0x9D7cC5A44B2F6103852eE7FbE47432e1a2F42276';
+const CONTRACT_ADDRESS = '0x0b81B5f23d9fD1DCC6F1477A206e10753961b053';
 const OFFERING_FEE_WEI = BigInt('200000000000000');
 const RITUAL_CHAIN_ID  = 1979;
 const RITUAL_CHAIN_HEX = '0x7BB';
@@ -340,8 +340,8 @@ const EXPLORER         = 'https://explorer.ritualfoundation.org';
 // ─────────────────────────────────────────────
 // STATE
 // ─────────────────────────────────────────────
-let _wallet   = null;
-let _chainId  = null;
+let _wallet     = null;
+let _chainId    = null;
 let _imgDataURL = null;
 let _offerings  = [];
 let _toastTimer;
@@ -367,6 +367,29 @@ function showToast(title, msg, loading) {
   }
   document.getElementById('toast').classList.add('show');
   if (!loading) _toastTimer = setTimeout(() => document.getElementById('toast').classList.remove('show'), 5000);
+}
+
+// ─────────────────────────────────────────────
+// WAIT FOR TRANSACTION — only save to Supabase after confirmed
+// ─────────────────────────────────────────────
+async function waitForTransaction(txHash) {
+  document.getElementById('offer-txt').innerHTML = '<span class="spinner"></span> Confirming on chain...';
+  for (let i = 0; i < 40; i++) {
+    try {
+      const receipt = await window.ethereum.request({
+        method: 'eth_getTransactionReceipt',
+        params: [txHash],
+      });
+      if (receipt) {
+        if (receipt.status === '0x1') return true; // success
+        throw new Error('Transaction failed on-chain — contract rejected it.');
+      }
+    } catch (e) {
+      if (e.message.includes('rejected')) throw e;
+    }
+    await new Promise(r => setTimeout(r, 3000)); // poll every 3 seconds
+  }
+  throw new Error('Transaction timed out — please check the explorer.');
 }
 
 // ─────────────────────────────────────────────
@@ -452,11 +475,11 @@ function setupWalletListeners() {
   window.ethereum.on('chainChanged', chainHex => {
     _chainId = parseInt(chainHex, 16);
     const onRitual = _chainId === RITUAL_CHAIN_ID;
-    const dot = document.getElementById('dot');
-    dot.classList.toggle('ok', onRitual);
+    document.getElementById('dot').classList.toggle('ok', onRitual);
     document.getElementById('net-name').textContent = onRitual ? 'Ritual Chain ✓' : 'Wrong Network';
     updateGate(); checkBtn();
   });
+  // Auto-reconnect
   window.ethereum.request({ method: 'eth_accounts' })
     .then(accounts => {
       if (accounts && accounts[0]) {
@@ -473,12 +496,8 @@ function setupWalletListeners() {
 // ─────────────────────────────────────────────
 function updateGate() {
   const gate = document.getElementById('chain-gate');
-  if (!_wallet) { gate.classList.remove('show'); return; }
-  if (_chainId !== RITUAL_CHAIN_ID) {
-    gate.classList.add('show');
-  } else {
-    gate.classList.remove('show');
-  }
+  if (!_wallet || _chainId === RITUAL_CHAIN_ID) { gate.classList.remove('show'); return; }
+  gate.classList.add('show');
 }
 
 async function switchToRitual() {
@@ -555,7 +574,6 @@ function onFile(e) {
   const img = new Image();
   const objectUrl = URL.createObjectURL(file);
   img.onload = () => {
-    // Resize to max 200px, quality 0.7 — good balance for on-chain + display
     const MAX = 200;
     let w = img.width, h = img.height;
     if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
@@ -583,7 +601,7 @@ function checkBtn() {
 async function submitOffering() {
   if (!_wallet || !_imgDataURL || _chainId !== RITUAL_CHAIN_ID) return;
 
-  // Double-check Supabase — prevent duplicate
+  // Check Supabase first — prevent duplicate attempt
   try {
     const existing = await checkAlreadyOfferedInDB(_wallet.toLowerCase());
     if (existing) { markOffered(existing.tx_hash); return; }
@@ -596,6 +614,7 @@ async function submitOffering() {
   showToast('Sign Transaction', 'Approve in your wallet — paying 0.0002 RITUAL...', true);
 
   try {
+    // ABI encode offer(string,string)
     const encodeStr = (s) => {
       const bytes  = new TextEncoder().encode(s);
       const lenHex = bytes.length.toString(16).padStart(64, '0');
@@ -603,30 +622,28 @@ async function submitOffering() {
       hex = hex.padEnd(Math.ceil(hex.length / 64) * 64, '0');
       return lenHex + hex;
     };
-
-    const selector   = '0x03689734'; // keccak256("offer(string,string)")[0:4]
-    const labelEnc   = encodeStr(label);
-    const imageEnc   = encodeStr(_imgDataURL);
+    const selector   = '0x03689734';
     const labelBytes = new TextEncoder().encode(label).length;
     const off0 = (64).toString(16).padStart(64, '0');
     const off1 = (64 + 32 + Math.ceil(labelBytes / 32) * 32).toString(16).padStart(64, '0');
-    const calldata = selector + off0 + off1 + labelEnc + imageEnc;
+    const calldata = selector + off0 + off1 + encodeStr(label) + encodeStr(_imgDataURL);
 
+    // Send transaction
     const txHash = await window.ethereum.request({
       method: 'eth_sendTransaction',
       params: [{ from: _wallet, to: CONTRACT_ADDRESS, value: '0x' + OFFERING_FEE_WEI.toString(16), data: calldata, chainId: RITUAL_CHAIN_HEX }],
     });
 
-    // Save to Supabase
-    document.getElementById('offer-txt').innerHTML = '<span class="spinner"></span> Saving to wall...';
-    try {
-      await saveOffering(_wallet.toLowerCase(), label, _imgDataURL, txHash);
-    } catch (dbErr) {
-      console.error('Supabase save failed:', dbErr);
-      showToast('DB Error', 'TX succeeded but wall save failed. Contact support with TX hash.', false);
-    }
+    showToast('Confirming...', 'Waiting for block confirmation — do not close this page.', true);
 
-    // Add to local wall immediately
+    // ★ Wait for on-chain confirmation before saving to Supabase
+    await waitForTransaction(txHash);
+
+    // Transaction confirmed — now save to Supabase
+    document.getElementById('offer-txt').innerHTML = '<span class="spinner"></span> Saving to wall...';
+    await saveOffering(_wallet.toLowerCase(), label, _imgDataURL, txHash);
+
+    // Add to wall immediately
     _offerings.push({ donor: _wallet, label, imageData: _imgDataURL, txHash, timestamp: Date.now() });
     renderWall();
 
@@ -639,7 +656,7 @@ async function submitOffering() {
     document.getElementById('file-in').value = '';
 
   } catch (err) {
-    showToast('Rejected', err.message || 'Transaction cancelled.', false);
+    showToast('Failed', err.message || 'Transaction cancelled or rejected.', false);
     btn.disabled = false;
     document.getElementById('offer-txt').textContent = '🔥 Pay 0.0002 RITUAL & Engrave';
   }
@@ -702,10 +719,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   if (!window.ethereum) document.getElementById('no-metamask').style.display = 'block';
-
   setupWalletListeners();
-
-  // Load wall from Supabase immediately — no wallet needed
   loadOfferings();
 });
 </script>
