@@ -722,6 +722,19 @@ document.addEventListener('DOMContentLoaded', () => {
   setupWalletListeners();
   loadOfferings();
 });
+
+// ─────────────────────────────────────────────
+// KEEP SUPABASE ALIVE — ping every 3 days
+// ─────────────────────────────────────────────
+function keepSupabaseAlive() {
+  sbFetch('offerings?select=id&limit=1')
+    .then(() => console.log('Supabase ping OK'))
+    .catch(() => console.log('Supabase ping failed'));
+}
+
+// Ping immediately on load, then every 3 days
+keepSupabaseAlive();
+setInterval(keepSupabaseAlive, 1000 * 60 * 60 * 24 * 3);
 </script>
 </body>
 </html>
