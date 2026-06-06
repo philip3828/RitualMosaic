@@ -368,7 +368,7 @@ function showToast(title, msg, loading) {
     setTimeout(() => { fill.style.width = '100%'; }, 30);
   }
   document.getElementById('toast').classList.add('show');
-  if (!loading) _toastTimer = setTimeout(() => document.getElementById('toast').classList.remove('show'), 5000);
+  if (!loading) _toastTimer = setTimeout(() => document.getElementById('toast').classList.remove('show'), 2000);
 }
 
 // ─────────────────────────────────────────────
