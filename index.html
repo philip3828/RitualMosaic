@@ -11,8 +11,6 @@
 html{scroll-behavior:smooth;}
 body{background:var(--black);color:var(--text);font-family:'Cinzel',serif;min-height:100vh;overflow-x:hidden;}
 body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");pointer-events:none;z-index:9999;opacity:.7;}
-
-/* HEADER */
 header{text-align:center;padding:48px 20px 32px;}
 .sigil{width:72px;height:72px;margin:0 auto 18px;animation:spin-slow 25s linear infinite;}
 .sigil svg{width:100%;height:100%;}
@@ -21,8 +19,6 @@ h1{font-family:'Cinzel Decorative',serif;font-size:clamp(1.8rem,5vw,3.8rem);font
 @keyframes shimmer{0%,100%{background-position:0% 50%;}50%{background-position:100% 50%;}}
 .sub{font-family:'IM Fell English',serif;font-style:italic;font-size:.9rem;color:var(--dim);letter-spacing:.18em;margin-top:8px;}
 .hline{width:180px;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:18px auto;}
-
-/* TOP BAR */
 .topbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;padding:14px 28px;background:rgba(11,7,24,.85);border-top:1px solid rgba(201,168,76,.12);border-bottom:1px solid rgba(201,168,76,.12);backdrop-filter:blur(12px);position:sticky;top:0;z-index:200;}
 .stats{display:flex;gap:24px;flex-wrap:wrap;align-items:center;}
 .stat{font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;display:flex;align-items:center;gap:7px;}
@@ -30,14 +26,10 @@ h1{font-family:'Cinzel Decorative',serif;font-size:clamp(1.8rem,5vw,3.8rem);font
 .dot{width:7px;height:7px;border-radius:50%;background:var(--blood);animation:blink 2s ease infinite;}
 .dot.ok{background:#22c55e;}
 @keyframes blink{0%,100%{opacity:1;}50%{opacity:.35;}}
-
-/* CONNECT BUTTON */
-#connect-btn{display:inline-flex;align-items:center;gap:8px;padding:11px 26px;background:linear-gradient(135deg,var(--crimson),var(--rune));border:1px solid var(--blood);color:var(--pale);font-family:'Cinzel',serif;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;position:relative;overflow:hidden;transition:all .3s;}
+#connect-btn{display:inline-flex;align-items:center;gap:8px;padding:11px 26px;background:linear-gradient(135deg,var(--crimson),var(--rune));border:1px solid var(--blood);color:var(--pale);font-family:'Cinzel',serif;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;transition:all .3s;}
 #connect-btn:hover{box-shadow:0 0 36px rgba(196,30,58,.55);filter:brightness(1.1);}
 #wallet-display{display:none;align-items:center;gap:10px;padding:8px 18px;border:1px solid rgba(201,168,76,.25);background:rgba(11,7,24,.7);font-size:.7rem;color:var(--gold);letter-spacing:.12em;font-family:monospace;cursor:pointer;}
 #wallet-display:hover{border-color:var(--gold);}
-
-/* BUTTONS */
 .btn{display:inline-flex;align-items:center;gap:8px;padding:11px 26px;background:transparent;border:1px solid var(--gold);color:var(--gold);font-family:'Cinzel',serif;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;position:relative;overflow:hidden;transition:all .3s;}
 .btn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--crimson),var(--rune));opacity:0;transition:opacity .3s;}
 .btn:hover::before{opacity:1;}
@@ -47,8 +39,6 @@ h1{font-family:'Cinzel Decorative',serif;font-size:clamp(1.8rem,5vw,3.8rem);font
 .btn.solid:hover{box-shadow:0 0 36px rgba(196,30,58,.55);}
 .btn:disabled{opacity:.4;cursor:not-allowed;pointer-events:none;}
 .btn.outline-gold{border-color:var(--gold);color:var(--gold);}
-
-/* CHAIN GATE OVERLAY */
 #chain-gate{position:fixed;inset:0;background:rgba(3,2,10,.97);z-index:500;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(18px);opacity:0;pointer-events:none;transition:opacity .4s;}
 #chain-gate.show{opacity:1;pointer-events:all;}
 .gate-box{max-width:460px;width:90%;border:1px solid rgba(201,168,76,.25);background:rgba(11,7,24,.98);padding:44px 38px;text-align:center;}
@@ -58,12 +48,8 @@ h1{font-family:'Cinzel Decorative',serif;font-size:clamp(1.8rem,5vw,3.8rem);font
 .gate-chain{background:rgba(201,168,76,.06);border:1px solid rgba(201,168,76,.18);padding:14px 18px;margin-bottom:22px;font-size:.72rem;color:var(--text);letter-spacing:.1em;text-align:left;line-height:2.2;}
 .gate-chain span{color:var(--gold);font-family:monospace;}
 .gate-btns{display:flex;flex-direction:column;gap:10px;}
-
-/* LAYOUT */
 .layout{display:grid;grid-template-columns:1fr 340px;gap:0;min-height:calc(100vh - 200px);}
 @media(max-width:900px){.layout{grid-template-columns:1fr;}.sidebar{order:-1;}}
-
-/* WALL */
 .wall-wrap{padding:0;background:var(--black);}
 .wall-header{display:flex;align-items:center;gap:14px;padding:18px 20px 14px;border-bottom:1px solid rgba(201,168,76,.1);}
 .wall-title{font-family:'Cinzel Decorative',serif;font-size:.8rem;letter-spacing:.25em;color:var(--gold);text-transform:uppercase;flex:1;}
@@ -81,8 +67,6 @@ h1{font-family:'Cinzel Decorative',serif;font-size:clamp(1.8rem,5vw,3.8rem);font
 .tile:hover .tile-ring{border-color:rgba(201,168,76,.6);}
 .empty-mosaic,.loading-wall{grid-column:1/-1;padding:80px 40px;text-align:center;color:var(--dim);font-family:'IM Fell English',serif;font-style:italic;font-size:1rem;letter-spacing:.1em;}
 .loading-wall{font-family:'Cinzel',serif;font-size:.75rem;text-transform:uppercase;letter-spacing:.15em;}
-
-/* SIDEBAR */
 .sidebar{background:rgba(11,7,24,.95);border-left:1px solid rgba(201,168,76,.1);display:flex;flex-direction:column;position:sticky;top:57px;max-height:calc(100vh - 57px);overflow-y:auto;}
 .sidebar::-webkit-scrollbar{width:4px;}
 .sidebar::-webkit-scrollbar-thumb{background:rgba(201,168,76,.2);}
@@ -90,8 +74,6 @@ h1{font-family:'Cinzel Decorative',serif;font-size:clamp(1.8rem,5vw,3.8rem);font
 .panel-title{font-family:'Cinzel Decorative',serif;font-size:.75rem;letter-spacing:.22em;color:var(--gold);text-transform:uppercase;margin-bottom:20px;}
 .wallet-info{font-size:.72rem;color:var(--dim);letter-spacing:.1em;line-height:2;}
 .wallet-addr{color:var(--gold);font-family:monospace;font-size:.8rem;}
-
-/* UPLOAD */
 .fee-badge{display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(201,168,76,.07);border:1px solid rgba(201,168,76,.2);margin-bottom:16px;}
 .drop{border:1px dashed rgba(201,168,76,.28);padding:28px 16px;text-align:center;cursor:pointer;position:relative;transition:all .3s;background:rgba(74,26,110,.04);}
 .drop:hover,.drop.over{border-color:var(--blood);background:rgba(139,0,0,.07);}
@@ -108,13 +90,9 @@ h1{font-family:'Cinzel Decorative',serif;font-size:clamp(1.8rem,5vw,3.8rem);font
 .field input::placeholder{color:var(--dim);}
 .gas-note{margin-top:14px;padding:10px 14px;background:rgba(139,0,0,.1);border-left:2px solid var(--blood);font-size:.65rem;color:var(--dim);font-family:'IM Fell English',serif;font-style:italic;letter-spacing:.07em;line-height:1.6;}
 .submit{margin-top:18px;width:100%;justify-content:center;}
-
-/* EMBED */
-.code{background:rgba(3,2,10,.8);border:1px solid rgba(201,168,76,.12);padding:12px 14px;font-family:monospace;font-size:.65rem;color:var(--pale);overflow-x:auto;white-space:nowrap;position:relative;}
+.code{background:rgba(3,2,10,.8);border:1px solid rgba(201,168,76,.12);padding:12px 14px;font-family:monospace;font-size:.65rem;color:var(--pale);overflow-x:auto;white-space:nowrap;}
 .copy-btn{display:block;margin-top:8px;background:rgba(139,0,0,.5);border:1px solid rgba(196,30,58,.35);color:var(--pale);font-family:'Cinzel',serif;font-size:.62rem;letter-spacing:.12em;padding:6px 12px;cursor:pointer;text-transform:uppercase;transition:background .2s;width:100%;}
 .copy-btn:hover{background:rgba(196,30,58,.75);}
-
-/* MODAL */
 .modal-bg{position:fixed;inset:0;background:rgba(3,2,10,.93);z-index:400;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .3s;backdrop-filter:blur(10px);}
 .modal-bg.open{opacity:1;pointer-events:all;}
 .modal{max-width:420px;width:100%;transform:translateY(18px);transition:transform .3s;position:relative;}
@@ -126,8 +104,6 @@ h1{font-family:'Cinzel Decorative',serif;font-size:clamp(1.8rem,5vw,3.8rem);font
 .modal-meta a{color:var(--blood);text-decoration:none;}
 .modal-meta a:hover{color:var(--gold);}
 .modal-x{position:absolute;top:8px;right:8px;background:rgba(139,0,0,.8);border:none;color:var(--pale);width:30px;height:30px;font-size:.9rem;cursor:pointer;display:flex;align-items:center;justify-content:center;}
-
-/* TOAST */
 .toast{position:fixed;bottom:24px;right:24px;max-width:320px;background:rgba(11,7,24,.96);border:1px solid rgba(201,168,76,.2);padding:18px 20px;z-index:600;transform:translateX(120%);transition:transform .4s cubic-bezier(.23,1,.32,1);backdrop-filter:blur(14px);}
 .toast.show{transform:translateX(0);}
 .toast-title{font-family:'Cinzel Decorative',serif;font-size:.7rem;letter-spacing:.18em;color:var(--gold);margin-bottom:6px;text-transform:uppercase;}
@@ -135,20 +111,16 @@ h1{font-family:'Cinzel Decorative',serif;font-size:clamp(1.8rem,5vw,3.8rem);font
 .toast-bar{margin-top:10px;height:2px;background:rgba(201,168,76,.1);overflow:hidden;}
 .toast-fill{height:100%;}
 @keyframes fill-anim{0%{width:0%}100%{width:100%}}
-
 footer{text-align:center;padding:32px 20px;border-top:1px solid rgba(201,168,76,.08);font-size:.62rem;color:var(--dim);letter-spacing:.18em;text-transform:uppercase;font-family:'IM Fell English',serif;font-style:italic;}
 footer a{color:var(--blood);text-decoration:none;}
 .spinner{display:inline-block;width:12px;height:12px;border:2px solid rgba(201,168,76,.3);border-top-color:var(--gold);border-radius:50%;animation:sp .75s linear infinite;vertical-align:middle;}
 @keyframes sp{to{transform:rotate(360deg);}}
-
-/* No wallet message */
 .no-wallet-msg{font-size:.72rem;color:var(--dim);font-family:'IM Fell English',serif;font-style:italic;letter-spacing:.08em;line-height:1.7;padding:14px;border:1px solid rgba(201,168,76,.1);background:rgba(74,26,110,.04);}
 .no-wallet-msg a{color:var(--blood);}
 </style>
 </head>
 <body>
 
-<!-- CHAIN GATE OVERLAY -->
 <div id="chain-gate">
   <div class="gate-box">
     <div class="gate-sigil">⛧</div>
@@ -168,7 +140,6 @@ footer a{color:var(--blood);text-decoration:none;}
   </div>
 </div>
 
-<!-- HEADER -->
 <header>
   <div class="sigil">
     <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
@@ -187,7 +158,6 @@ footer a{color:var(--blood);text-decoration:none;}
   <p style="font-size:.72rem;color:var(--dim);font-family:'IM Fell English',serif;font-style:italic;letter-spacing:.12em;">Pay gas. Upload your image. Be etched into the chain forever.</p>
 </header>
 
-<!-- TOP BAR -->
 <div class="topbar">
   <div class="stats">
     <div class="stat"><div class="dot" id="dot"></div><span id="net-name">Not Connected</span></div>
@@ -195,7 +165,6 @@ footer a{color:var(--blood);text-decoration:none;}
     <div class="stat">Offerings <span class="stat-val" id="count">—</span></div>
     <div class="stat">Currency <span class="stat-val">RITUAL</span></div>
   </div>
-  <!-- Wallet connection UI — native window.ethereum, no framework needed -->
   <div id="rk-mount">
     <button id="connect-btn" onclick="connectWallet()">⬡ Connect Wallet</button>
     <div id="wallet-display" onclick="disconnectWallet()">
@@ -206,59 +175,46 @@ footer a{color:var(--blood);text-decoration:none;}
   </div>
 </div>
 
-<!-- LAYOUT -->
 <div class="layout">
-
-  <!-- MOSAIC WALL -->
   <div class="wall-wrap">
     <div class="wall-header">
       <div class="wall-title">⬡ The Eternal Wall</div>
       <div class="wall-count"><span id="count2">—</span> souls have made their offering</div>
     </div>
     <div id="mosaic">
-      <div class="loading-wall" id="loading-wall"><span class="spinner"></span>&nbsp; Loading offerings from Ritual Chain...</div>
+      <div class="loading-wall" id="loading-wall"><span class="spinner"></span>&nbsp; Loading offerings...</div>
       <div class="empty-mosaic" id="empty" style="display:none;">The wall awaits its first offering. Be the first.</div>
     </div>
   </div>
 
-  <!-- SIDEBAR -->
   <div class="sidebar">
-
-    <!-- WALLET -->
     <div class="panel">
       <div class="panel-title">⬡ Your Wallet</div>
       <div id="w-disconnected">
         <p style="font-size:.72rem;color:var(--dim);font-family:'IM Fell English',serif;font-style:italic;letter-spacing:.08em;line-height:1.7;">Connect your wallet using the button in the top bar. You must be on Ritual Chain (ID: 1979) to make an offering.</p>
         <div id="no-metamask" style="display:none;margin-top:12px;">
-          <p class="no-wallet-msg">No wallet detected. Install <a href="https://metamask.io" target="_blank">MetaMask ↗</a> or another Web3 wallet, then refresh the page.</p>
+          <p class="no-wallet-msg">No wallet detected. Install <a href="https://metamask.io" target="_blank">MetaMask ↗</a> or another Web3 wallet, then refresh.</p>
         </div>
       </div>
       <div id="w-connected" style="display:none;">
         <div class="wallet-info">
           <div>Address: <span class="wallet-addr" id="w-addr">—</span></div>
           <div>Balance: <span style="color:var(--pale)" id="w-bal">—</span> RITUAL</div>
-          <div style="margin-top:6px;">
-            <a href="#" id="w-explorer" target="_blank" style="color:var(--blood);font-size:.62rem;text-decoration:none;">View on Explorer ↗</a>
-          </div>
+          <div style="margin-top:6px;"><a href="#" id="w-explorer" target="_blank" style="color:var(--blood);font-size:.62rem;text-decoration:none;">View on Explorer ↗</a></div>
         </div>
       </div>
     </div>
 
-    <!-- UPLOAD -->
     <div class="panel">
       <div class="panel-title">🔥 Make Your Offering</div>
-
-      <!-- Already offered state -->
       <div id="already-offered" style="display:none;">
         <div style="text-align:center;padding:24px 12px;">
           <div style="font-size:2rem;margin-bottom:12px;">✦</div>
           <div style="font-family:'Cinzel Decorative',serif;font-size:.8rem;color:var(--gold);letter-spacing:.2em;margin-bottom:10px;">OFFERING MADE</div>
-          <div style="font-family:'IM Fell English',serif;font-style:italic;font-size:.78rem;color:var(--dim);line-height:1.8;letter-spacing:.07em;">Your mark is etched into Ritual Chain. Each wallet may only make one offering — yours is permanent and immortal.</div>
+          <div style="font-family:'IM Fell English',serif;font-style:italic;font-size:.78rem;color:var(--dim);line-height:1.8;letter-spacing:.07em;">Your mark is etched into Ritual Chain forever.</div>
           <div id="offered-tx" style="margin-top:14px;font-size:.65rem;"></div>
         </div>
       </div>
-
-      <!-- Upload form -->
       <div id="upload-panel">
         <div class="fee-badge">
           <span style="font-size:1.1rem;">⚗️</span>
@@ -268,46 +224,36 @@ footer a{color:var(--blood);text-decoration:none;}
             <div style="font-size:.6rem;color:var(--dim);letter-spacing:.08em;margin-top:2px;">Required to engrave. One upload per wallet.</div>
           </div>
         </div>
-
         <div class="drop" id="drop">
           <input type="file" accept="image/*" id="file-in" onchange="onFile(event)">
           <div class="drop-icon">🖼️</div>
-          <div class="drop-txt">Drop image here or click<br>
-            <span style="font-size:.58rem;color:var(--dim)">PNG · JPG · GIF · WEBP — max 500 KB</span>
-          </div>
+          <div class="drop-txt">Drop image here or click<br><span style="font-size:.58rem;color:var(--dim)">PNG · JPG · GIF · WEBP — max 2 MB</span></div>
         </div>
-
         <div class="preview" id="preview"><img id="prev-img" src="" alt="preview"></div>
-
         <div class="field">
           <label>Your Name / Label (optional)</label>
           <input type="text" id="label" placeholder="e.g. 0xWizard, CryptoMage..." maxlength="60">
         </div>
-
-        <div class="gas-note">✦ Paying 0.0002 RITUAL engraves your image permanently on Ritual Chain. One wallet, one tile, forever. Confirmed on-chain at <a href="https://explorer.ritualfoundation.org/address/0x9D7cC5A44B2F6103852eE7FbE47432e1a2F42276" target="_blank" style="color:var(--blood);">contract ↗</a></div>
-
+        <div class="gas-note">✦ Paying 0.0002 RITUAL engraves your image permanently. One wallet, one tile, forever. Contract: <a href="https://explorer.ritualfoundation.org/address/0x9D7cC5A44B2F6103852eE7FbE47432e1a2F42276" target="_blank" style="color:var(--blood);">↗</a></div>
         <button class="btn solid submit" id="offer-btn" onclick="submitOffering()" disabled>
           <span id="offer-txt">🔥 Pay 0.0002 RITUAL &amp; Engrave</span>
         </button>
       </div>
     </div>
 
-    <!-- EMBED -->
     <div class="panel">
       <div class="panel-title">⬡ Embed Anywhere</div>
-      <p style="font-size:.68rem;color:var(--dim);font-family:'IM Fell English',serif;font-style:italic;margin-bottom:12px;letter-spacing:.07em;line-height:1.7;">Copy this code and paste it into any webpage. The live mosaic wall will appear — same data, any device, forever.</p>
+      <p style="font-size:.68rem;color:var(--dim);font-family:'IM Fell English',serif;font-style:italic;margin-bottom:12px;letter-spacing:.07em;line-height:1.7;">Paste this into any webpage to embed the live mosaic wall.</p>
       <div class="code">&lt;iframe src="<span id="e-url"></span>" width="100%" height="700" frameborder="0"&gt;&lt;/iframe&gt;</div>
       <button class="copy-btn" onclick="copyEmbed()">📋 Copy Embed Code</button>
     </div>
-
-  </div><!-- /sidebar -->
-</div><!-- /layout -->
+  </div>
+</div>
 
 <footer>
   Ritual Mosaic · Contract: <a href="https://explorer.ritualfoundation.org/address/0x9D7cC5A44B2F6103852eE7FbE47432e1a2F42276" target="_blank">0x9D7cC5A44B2F6103852eE7FbE47432e1a2F42276</a> · Ritual Chain 1979
 </footer>
 
-<!-- MODAL -->
 <div class="modal-bg" id="modal" onclick="closeModal(event)">
   <div class="modal">
     <button class="modal-x" onclick="closeModal()">✕</button>
@@ -319,7 +265,6 @@ footer a{color:var(--blood);text-decoration:none;}
   </div>
 </div>
 
-<!-- TOAST -->
 <div class="toast" id="toast">
   <div class="toast-title" id="t-title"></div>
   <div class="toast-msg" id="t-msg"></div>
@@ -328,24 +273,77 @@ footer a{color:var(--blood);text-decoration:none;}
 
 <script>
 // ─────────────────────────────────────────────
+// SUPABASE CONFIG
+// ─────────────────────────────────────────────
+const SUPABASE_URL  = 'https://safyiakhlywhaeifgqvw.supabase.co';
+const SUPABASE_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNhZnlpYWtobHl3aGFlaWZncXZ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA2OTg2MDMsImV4cCI6MjA5NjI3NDYwM30.GH43kdIKUqy6RG_NYienY3CDe8BK3UsVleOIcGdbdus';
+
+async function sbFetch(path, options = {}) {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+    ...options,
+    headers: {
+      'apikey': SUPABASE_KEY,
+      'Authorization': `Bearer ${SUPABASE_KEY}`,
+      'Content-Type': 'application/json',
+      'Prefer': options.prefer || '',
+      ...options.headers,
+    },
+  });
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error(err);
+  }
+  const text = await res.text();
+  return text ? JSON.parse(text) : null;
+}
+
+async function loadOfferings() {
+  try {
+    const rows = await sbFetch('offerings?select=*&order=created_at.asc');
+    _offerings = (rows || []).map(r => ({
+      donor:     r.wallet,
+      label:     r.label || 'Anonymous',
+      imageData: r.image_data,
+      txHash:    r.tx_hash,
+      timestamp: new Date(r.created_at).getTime(),
+    }));
+    renderWall();
+  } catch (e) {
+    console.error('Failed to load offerings:', e);
+    document.getElementById('loading-wall').textContent = 'Could not load offerings.';
+  }
+}
+
+async function saveOffering(wallet, label, imageData, txHash) {
+  await sbFetch('offerings', {
+    method: 'POST',
+    prefer: 'return=minimal',
+    body: JSON.stringify({ wallet, label, image_data: imageData, tx_hash: txHash }),
+  });
+}
+
+async function checkAlreadyOfferedInDB(wallet) {
+  const rows = await sbFetch(`offerings?wallet=eq.${wallet}&select=tx_hash`);
+  return rows && rows.length > 0 ? rows[0] : null;
+}
+
+// ─────────────────────────────────────────────
 // CONSTANTS
 // ─────────────────────────────────────────────
-const CONTRACT_ADDRESS  = '0x9D7cC5A44B2F6103852eE7FbE47432e1a2F42276';
-const OFFERING_FEE_WEI  = BigInt('200000000000000'); // 0.0002 RITUAL
-const RITUAL_CHAIN_ID   = 1979;
-const RITUAL_CHAIN_HEX  = '0x7BB';
-const RITUAL_RPC        = 'https://rpc.ritualfoundation.org/';
-const EXPLORER          = 'https://explorer.ritualfoundation.org';
-const OFFERING_TOPIC    = '0xdc73cbcf361b242a0e414aeeb707f7342914556a69376245796566715ad5f192';
+const CONTRACT_ADDRESS = '0x9D7cC5A44B2F6103852eE7FbE47432e1a2F42276';
+const OFFERING_FEE_WEI = BigInt('200000000000000');
+const RITUAL_CHAIN_ID  = 1979;
+const RITUAL_CHAIN_HEX = '0x7BB';
+const RITUAL_RPC       = 'https://rpc.ritualfoundation.org/';
+const EXPLORER         = 'https://explorer.ritualfoundation.org';
 
 // ─────────────────────────────────────────────
 // STATE
 // ─────────────────────────────────────────────
-let _wallet     = null;
-let _chainId    = null;
+let _wallet   = null;
+let _chainId  = null;
 let _imgDataURL = null;
 let _offerings  = [];
-let _gateClosedByUser = false;
 let _toastTimer;
 
 // ─────────────────────────────────────────────
@@ -368,11 +366,11 @@ function showToast(title, msg, loading) {
     setTimeout(() => { fill.style.width = '100%'; }, 30);
   }
   document.getElementById('toast').classList.add('show');
-  if (!loading) _toastTimer = setTimeout(() => document.getElementById('toast').classList.remove('show'), 2000);
+  if (!loading) _toastTimer = setTimeout(() => document.getElementById('toast').classList.remove('show'), 5000);
 }
 
 // ─────────────────────────────────────────────
-// WALLET CONNECTION
+// WALLET
 // ─────────────────────────────────────────────
 async function connectWallet() {
   if (!window.ethereum) {
@@ -394,24 +392,19 @@ async function connectWallet() {
 }
 
 function disconnectWallet() {
-  _wallet  = null;
-  _chainId = null;
+  _wallet = null; _chainId = null;
   onWalletDisconnected();
 }
 
-function onWalletConnected() {
-  // Top bar
-  document.getElementById('connect-btn').style.display  = 'none';
+async function onWalletConnected() {
+  document.getElementById('connect-btn').style.display    = 'none';
   document.getElementById('wallet-display').style.display = 'flex';
   document.getElementById('wd-addr').textContent = _wallet.slice(0,6)+'...'+_wallet.slice(-4);
-
-  // Sidebar
   document.getElementById('w-disconnected').style.display = 'none';
   document.getElementById('w-connected').style.display    = 'block';
   document.getElementById('w-addr').textContent = _wallet.slice(0,6)+'...'+_wallet.slice(-4);
   document.getElementById('w-explorer').href = `${EXPLORER}/address/${_wallet}`;
 
-  // Status dot
   const onRitual = _chainId === RITUAL_CHAIN_ID;
   const dot = document.getElementById('dot');
   if (onRitual) {
@@ -421,122 +414,49 @@ function onWalletConnected() {
     dot.classList.remove('ok');
     document.getElementById('net-name').textContent = 'Wrong Network';
   }
-
-  // Chain gate
   updateGate();
 
-  // Balance
-  window.ethereum.request({ method: 'eth_getBalance', params: [_wallet, 'latest'] })
-    .then(b => { document.getElementById('w-bal').textContent = (parseInt(b, 16) / 1e18).toFixed(4); })
-    .catch(() => {});
-
-  // Check if already offered & reload wall
-  if (onRitual) {
-    checkIfAlreadyOffered(_wallet);
-    loadOfferingsViaProvider();
+  if (window.ethereum) {
+    window.ethereum.request({ method: 'eth_getBalance', params: [_wallet, 'latest'] })
+      .then(b => { document.getElementById('w-bal').textContent = (parseInt(b,16)/1e18).toFixed(4); })
+      .catch(() => {});
   }
+
+  // Check Supabase if already offered
+  try {
+    const existing = await checkAlreadyOfferedInDB(_wallet.toLowerCase());
+    if (existing) { markOffered(existing.tx_hash); return; }
+  } catch {}
 
   checkBtn();
 }
 
 function onWalletDisconnected() {
-  document.getElementById('connect-btn').style.display   = 'flex';
+  document.getElementById('connect-btn').style.display    = 'flex';
   document.getElementById('wallet-display').style.display = 'none';
   document.getElementById('w-disconnected').style.display = 'block';
-  document.getElementById('w-connected').style.display   = 'none';
+  document.getElementById('w-connected').style.display    = 'none';
   document.getElementById('dot').classList.remove('ok');
   document.getElementById('net-name').textContent = 'Not Connected';
-  document.getElementById('upload-panel').style.display   = 'block';
+  document.getElementById('upload-panel').style.display    = 'block';
   document.getElementById('already-offered').style.display = 'none';
-  updateGate();
-  checkBtn();
+  updateGate(); checkBtn();
 }
 
-// ─────────────────────────────────────────────
-// CHAIN GATE
-// ─────────────────────────────────────────────
-function updateGate() {
-  const gate = document.getElementById('chain-gate');
-  if (!_wallet) { gate.classList.remove('show'); return; }
-  if (_chainId !== RITUAL_CHAIN_ID) {
-    document.getElementById('gate-title').textContent = 'Wrong Network';
-    document.getElementById('gate-msg').textContent   =
-      'Your wallet is connected but not on Ritual Chain. Switch network to make your offering.';
-    gate.classList.add('show');
-  } else {
-    gate.classList.remove('show');
-  }
-}
-
-async function switchToRitual() {
-  if (!window.ethereum) return;
-  const btn = document.getElementById('gate-btn-txt');
-  btn.innerHTML = '<span class="spinner"></span> Switching...';
-  try {
-    await window.ethereum.request({
-      method: 'wallet_switchEthereumChain',
-      params: [{ chainId: RITUAL_CHAIN_HEX }],
-    });
-  } catch (err) {
-    if (err.code === 4902 || err.code === -32603) {
-      try {
-        await window.ethereum.request({
-          method: 'wallet_addEthereumChain',
-          params: [{
-            chainId:           RITUAL_CHAIN_HEX,
-            chainName:         'Ritual',
-            rpcUrls:           [RITUAL_RPC],
-            nativeCurrency:    { name: 'Ritual', symbol: 'RITUAL', decimals: 18 },
-            blockExplorerUrls: [EXPLORER + '/'],
-          }],
-        });
-      } catch (addErr) {
-        showToast('Failed', addErr.message || 'Could not add Ritual Chain.', false);
-      }
-    } else {
-      showToast('Failed', err.message || 'Could not switch network.', false);
-    }
-  }
-  btn.textContent = '⬡ Switch to Ritual Chain';
-}
-
-function closeGateViewOnly() {
-  _gateClosedByUser = true;
-  document.getElementById('chain-gate').classList.remove('show');
-}
-
-// ─────────────────────────────────────────────
-// WALLET EVENT LISTENERS
-// ─────────────────────────────────────────────
 function setupWalletListeners() {
   if (!window.ethereum) return;
-  window.ethereum.on('accountsChanged', (accounts) => {
-    if (accounts && accounts[0]) {
-      _wallet = accounts[0];
-      onWalletConnected();
-    } else {
-      disconnectWallet();
-    }
+  window.ethereum.on('accountsChanged', accounts => {
+    if (accounts && accounts[0]) { _wallet = accounts[0]; onWalletConnected(); }
+    else disconnectWallet();
   });
-  window.ethereum.on('chainChanged', (chainHex) => {
+  window.ethereum.on('chainChanged', chainHex => {
     _chainId = parseInt(chainHex, 16);
     const onRitual = _chainId === RITUAL_CHAIN_ID;
     const dot = document.getElementById('dot');
-    if (onRitual) {
-      dot.classList.add('ok');
-      document.getElementById('net-name').textContent = 'Ritual Chain ✓';
-      if (_wallet) {
-        checkIfAlreadyOffered(_wallet);
-        loadOfferingsViaProvider();
-      }
-    } else {
-      dot.classList.remove('ok');
-      document.getElementById('net-name').textContent = 'Wrong Network';
-    }
-    updateGate();
-    checkBtn();
+    dot.classList.toggle('ok', onRitual);
+    document.getElementById('net-name').textContent = onRitual ? 'Ritual Chain ✓' : 'Wrong Network';
+    updateGate(); checkBtn();
   });
-  // Auto-reconnect if previously connected
   window.ethereum.request({ method: 'eth_accounts' })
     .then(accounts => {
       if (accounts && accounts[0]) {
@@ -549,67 +469,47 @@ function setupWalletListeners() {
 }
 
 // ─────────────────────────────────────────────
-// WALL — LOAD FROM CHAIN
+// CHAIN GATE
 // ─────────────────────────────────────────────
-async function loadOfferingsViaProvider() {
-  if (!window.ethereum) { loadFromLocal(); return; }
+function updateGate() {
+  const gate = document.getElementById('chain-gate');
+  if (!_wallet) { gate.classList.remove('show'); return; }
+  if (_chainId !== RITUAL_CHAIN_ID) {
+    gate.classList.add('show');
+  } else {
+    gate.classList.remove('show');
+  }
+}
+
+async function switchToRitual() {
+  if (!window.ethereum) return;
+  const btn = document.getElementById('gate-btn-txt');
+  btn.innerHTML = '<span class="spinner"></span> Switching...';
   try {
-    const logs = await window.ethereum.request({
-      method: 'eth_getLogs',
-      params: [{
-        fromBlock: '0x0',
-        toBlock:   'latest',
-        address:   CONTRACT_ADDRESS,
-        topics:    [OFFERING_TOPIC],
-      }],
-    });
-
-    const decoded = logs.map(log => {
+    await window.ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: RITUAL_CHAIN_HEX }] });
+  } catch (err) {
+    if (err.code === 4902 || err.code === -32603) {
       try {
-        const data   = log.data.startsWith('0x') ? log.data.slice(2) : log.data;
-        const readUint = h => parseInt(h, 16);
-        const off0   = readUint(data.slice(0,   64));
-        const off1   = readUint(data.slice(64,  128));
-        const ts     = readUint(data.slice(128, 192));
-
-        const readStr = (byteOff) => {
-          const hexOff = byteOff * 2;
-          const len    = readUint(data.slice(hexOff, hexOff + 64));
-          const bytes  = [];
-          for (let i = 0; i < len; i++) {
-            bytes.push(parseInt(data.slice(hexOff + 64 + i * 2, hexOff + 66 + i * 2), 16));
-          }
-          return new TextDecoder().decode(new Uint8Array(bytes));
-        };
-
-        return {
-          donor:     '0x' + log.topics[1].slice(26),
-          tileIndex: log.topics[2] ? parseInt(log.topics[2], 16) : 0,
-          label:     readStr(off0),
-          imageData: readStr(off1),
-          timestamp: ts * 1000,
-          txHash:    log.transactionHash,
-        };
-      } catch { return null; }
-    }).filter(Boolean).sort((a, b) => a.tileIndex - b.tileIndex);
-
-    _offerings = decoded;
-    renderWall();
-  } catch { loadFromLocal(); }
+        await window.ethereum.request({
+          method: 'wallet_addEthereumChain',
+          params: [{ chainId: RITUAL_CHAIN_HEX, chainName: 'Ritual', rpcUrls: [RITUAL_RPC], nativeCurrency: { name: 'Ritual', symbol: 'RITUAL', decimals: 18 }, blockExplorerUrls: [EXPLORER+'/'] }],
+        });
+      } catch (addErr) { showToast('Failed', addErr.message || 'Could not add Ritual Chain.', false); }
+    } else { showToast('Failed', err.message || 'Could not switch network.', false); }
+  }
+  btn.textContent = '⬡ Switch to Ritual Chain';
 }
 
-function loadFromLocal() {
-  try { _offerings = JSON.parse(localStorage.getItem('ritual_mosaic_v2') || '[]'); }
-  catch { _offerings = []; }
-  renderWall();
+function closeGateViewOnly() {
+  document.getElementById('chain-gate').classList.remove('show');
 }
 
 // ─────────────────────────────────────────────
-// WALL — RENDER
+// WALL
 // ─────────────────────────────────────────────
 function renderWall() {
   const grid = document.getElementById('mosaic');
-  const n    = _offerings.length;
+  const n = _offerings.length;
   document.getElementById('count').textContent  = n;
   document.getElementById('count2').textContent = n;
   document.getElementById('loading-wall').style.display = 'none';
@@ -636,41 +536,12 @@ function renderWall() {
 
 function adjustTileSize() {
   const wall = document.getElementById('mosaic');
-  const w    = wall.clientWidth;
+  const w = wall.clientWidth;
   const cols = Math.max(4, Math.floor(w / 82));
-  const sz   = Math.floor((w - cols * 2) / cols);
+  const sz = Math.floor((w - cols * 2) / cols);
   document.documentElement.style.setProperty('--tile', sz + 'px');
 }
 window.addEventListener('resize', adjustTileSize);
-
-// ─────────────────────────────────────────────
-// ALREADY OFFERED CHECK
-// ─────────────────────────────────────────────
-async function checkIfAlreadyOffered(address) {
-  if (!address || !window.ethereum) return;
-  try {
-    const res = await window.ethereum.request({
-      method: 'eth_call',
-      params: [{
-        to:   CONTRACT_ADDRESS,
-        data: '0x349815e9' + address.slice(2).padStart(64, '0'),
-      }, 'latest'],
-    });
-    if (res === '0x' + '0'.repeat(63) + '1') {
-      const past = _offerings.find(o => o.donor && o.donor.toLowerCase() === address.toLowerCase());
-      markOffered(past?.txHash || null);
-    }
-  } catch {}
-}
-
-function markOffered(txHash) {
-  document.getElementById('upload-panel').style.display    = 'none';
-  document.getElementById('already-offered').style.display = 'block';
-  if (txHash) {
-    document.getElementById('offered-tx').innerHTML =
-      `<a href="${EXPLORER}/tx/${txHash}" target="_blank" style="color:var(--blood);">View your TX on Explorer ↗</a>`;
-  }
-}
 
 // ─────────────────────────────────────────────
 // FILE UPLOAD
@@ -679,21 +550,19 @@ function onFile(e) {
   const file = e.target.files[0];
   if (!file) return;
   if (!file.type.startsWith('image/')) { showToast('Invalid', 'Only image files are accepted.', false); return; }
-  if (file.size > 500 * 1024) { showToast('Too Large', 'Image must be under 500 KB.', false); return; }
+  if (file.size > 2 * 1024 * 1024) { showToast('Too Large', 'Image must be under 2 MB.', false); return; }
 
   const img = new Image();
   const objectUrl = URL.createObjectURL(file);
   img.onload = () => {
+    // Resize to max 200px, quality 0.7 — good balance for on-chain + display
     const MAX = 200;
     let w = img.width, h = img.height;
     if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
     else        { w = Math.round(w * MAX / h); h = MAX; }
-
     const canvas = document.createElement('canvas');
-    canvas.width  = w;
-    canvas.height = h;
+    canvas.width = w; canvas.height = h;
     canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-
     _imgDataURL = canvas.toDataURL('image/jpeg', 0.7);
     document.getElementById('prev-img').src = _imgDataURL;
     document.getElementById('preview').classList.add('on');
@@ -714,77 +583,56 @@ function checkBtn() {
 async function submitOffering() {
   if (!_wallet || !_imgDataURL || _chainId !== RITUAL_CHAIN_ID) return;
 
-  // Check on-chain if already offered
+  // Double-check Supabase — prevent duplicate
   try {
-    const already = await window.ethereum.request({
-      method: 'eth_call',
-      params: [{
-        to:   CONTRACT_ADDRESS,
-        data: '0xb4a99a4b' + _wallet.slice(2).padStart(64, '0'),
-      }, 'latest'],
-    });
-    if (already === '0x' + '0'.repeat(63) + '1') {
-      showToast('Already Offered', 'This wallet has already made its one offering.', false);
-      markOffered(null);
-      return;
-    }
+    const existing = await checkAlreadyOfferedInDB(_wallet.toLowerCase());
+    if (existing) { markOffered(existing.tx_hash); return; }
   } catch {}
 
   const label = document.getElementById('label').value.trim() || 'Anonymous';
-  const btn   = document.getElementById('offer-btn');
+  const btn = document.getElementById('offer-btn');
   btn.disabled = true;
   document.getElementById('offer-txt').innerHTML = '<span class="spinner"></span> Awaiting Signature...';
-  showToast('Sign Transaction', 'Approve in your wallet — paying 0.0002 RITUAL to engrave...', true);
+  showToast('Sign Transaction', 'Approve in your wallet — paying 0.0002 RITUAL...', true);
 
   try {
-    // Encode offer(string label, string imageData)
     const encodeStr = (s) => {
       const bytes  = new TextEncoder().encode(s);
       const lenHex = bytes.length.toString(16).padStart(64, '0');
-      let hex      = Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
+      let hex = Array.from(bytes).map(b => b.toString(16).padStart(2,'0')).join('');
       hex = hex.padEnd(Math.ceil(hex.length / 64) * 64, '0');
       return lenHex + hex;
     };
 
-    const selector  = '0x03689734'; // keccak256("offer(string,string)")[0:4]
-    const labelEnc  = encodeStr(label);
-    const imageEnc  = encodeStr(_imgDataURL);
+    const selector   = '0x03689734'; // keccak256("offer(string,string)")[0:4]
+    const labelEnc   = encodeStr(label);
+    const imageEnc   = encodeStr(_imgDataURL);
     const labelBytes = new TextEncoder().encode(label).length;
-    const off0      = (64).toString(16).padStart(64, '0');
-    const off1      = (64 + 32 + Math.ceil(labelBytes / 32) * 32).toString(16).padStart(64, '0');
-    const calldata  = selector + off0 + off1 + labelEnc + imageEnc;
+    const off0 = (64).toString(16).padStart(64, '0');
+    const off1 = (64 + 32 + Math.ceil(labelBytes / 32) * 32).toString(16).padStart(64, '0');
+    const calldata = selector + off0 + off1 + labelEnc + imageEnc;
 
     const txHash = await window.ethereum.request({
       method: 'eth_sendTransaction',
-      params: [{
-        from:    _wallet,
-        to:      CONTRACT_ADDRESS,
-        value:   '0x' + OFFERING_FEE_WEI.toString(16),
-        data:    calldata,
-        chainId: RITUAL_CHAIN_HEX,
-      }],
+      params: [{ from: _wallet, to: CONTRACT_ADDRESS, value: '0x' + OFFERING_FEE_WEI.toString(16), data: calldata, chainId: RITUAL_CHAIN_HEX }],
     });
 
-    // Save locally + update wall immediately
-    const offering = {
-      donor:     _wallet,
-      label,
-      imageData: _imgDataURL,
-      tileIndex: _offerings.length + 1,
-      timestamp: Date.now(),
-      txHash,
-    };
-    _offerings.push(offering);
-    const local = JSON.parse(localStorage.getItem('ritual_mosaic_v2') || '[]');
-    local.push({ address: _wallet, label, image: _imgDataURL, timestamp: Date.now(), txHash });
-    localStorage.setItem('ritual_mosaic_v2', JSON.stringify(local));
+    // Save to Supabase
+    document.getElementById('offer-txt').innerHTML = '<span class="spinner"></span> Saving to wall...';
+    try {
+      await saveOffering(_wallet.toLowerCase(), label, _imgDataURL, txHash);
+    } catch (dbErr) {
+      console.error('Supabase save failed:', dbErr);
+      showToast('DB Error', 'TX succeeded but wall save failed. Contact support with TX hash.', false);
+    }
+
+    // Add to local wall immediately
+    _offerings.push({ donor: _wallet, label, imageData: _imgDataURL, txHash, timestamp: Date.now() });
     renderWall();
 
-    document.getElementById('t-title').textContent = '✦ Offering Accepted';
-    document.getElementById('t-msg').innerHTML =
-      `TX: <a href="${EXPLORER}/tx/${txHash}" target="_blank" style="color:var(--gold)">${txHash.slice(0,12)}...↗</a><br>Your image is now etched forever.`;
-
+    showToast('✦ Offering Accepted', `TX: <a href="${EXPLORER}/tx/${txHash}" target="_blank" style="color:var(--gold)">${txHash.slice(0,12)}...↗</a><br>Your image is now etched forever.`, false);
     markOffered(txHash);
+
     _imgDataURL = null;
     document.getElementById('preview').classList.remove('on');
     document.getElementById('label').value = '';
@@ -797,12 +645,21 @@ async function submitOffering() {
   }
 }
 
+function markOffered(txHash) {
+  document.getElementById('upload-panel').style.display    = 'none';
+  document.getElementById('already-offered').style.display = 'block';
+  if (txHash) {
+    document.getElementById('offered-tx').innerHTML =
+      `<a href="${EXPLORER}/tx/${txHash}" target="_blank" style="color:var(--blood);">View your TX on Explorer ↗</a>`;
+  }
+}
+
 // ─────────────────────────────────────────────
 // MODAL
 // ─────────────────────────────────────────────
 function openModal(o) {
   const addr = o.donor ? o.donor.slice(0,6)+'...'+o.donor.slice(-4) : '???';
-  document.getElementById('m-img').src  = o.imageData;
+  document.getElementById('m-img').src = o.imageData;
   document.getElementById('m-name').textContent = o.label || 'Anonymous';
   document.getElementById('m-meta').innerHTML =
     `Offered by: ${addr}<br>Date: ${new Date(o.timestamp).toLocaleString()}<br>` +
@@ -828,39 +685,29 @@ function copyEmbed() {
 }
 
 // ─────────────────────────────────────────────
-// DRAG & DROP
+// INIT
 // ─────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('e-url').textContent = window.location.href;
 
   const z = document.getElementById('drop');
   z.addEventListener('dragover',  e => { e.preventDefault(); z.classList.add('over'); });
-  z.addEventListener('dragleave', ()  => z.classList.remove('over'));
+  z.addEventListener('dragleave', () => z.classList.remove('over'));
   z.addEventListener('drop', e => {
-    e.preventDefault();
-    z.classList.remove('over');
+    e.preventDefault(); z.classList.remove('over');
     if (e.dataTransfer.files[0]) {
       document.getElementById('file-in').files = e.dataTransfer.files;
       onFile({ target: document.getElementById('file-in') });
     }
   });
 
-  // Show no-wallet warning if no ethereum
-  if (!window.ethereum) {
-    document.getElementById('no-metamask').style.display = 'block';
-  }
+  if (!window.ethereum) document.getElementById('no-metamask').style.display = 'block';
 
-  // Setup wallet event listeners and auto-reconnect
   setupWalletListeners();
 
-  // Load wall (works without wallet)
-  if (window.ethereum) {
-    loadOfferingsViaProvider();
-  } else {
-    loadFromLocal();
-  }
+  // Load wall from Supabase immediately — no wallet needed
+  loadOfferings();
 });
 </script>
-
 </body>
 </html>
